@@ -18,10 +18,12 @@
         "name": "next"
       }
     ],
+    "baseUrl": "./",                   /* Base directory to resolve non-absolute module names. */
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },                                 /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
+    "outDir": "./.build"      // 「入力ファイルを～」エラー回避に必須。
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "./src/**/*","./test/**/*"],
   "exclude": ["node_modules"]
 }
