@@ -15,8 +15,14 @@ export default function RootLayout({
   return (
     <html>
       <body>
-        <main>
-        <Page/>
+        <main className='flex justify-center items-center h-screen'>
+          <div className='flex justify-center items-center flex-col'>
+            <Page/>
+            <Page/>
+            <Page/>
+            <Page/>
+            <Page/>
+          </div>
         </main>
       </body>
     </html>
