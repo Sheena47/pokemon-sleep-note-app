@@ -13,18 +13,6 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html>
-      <body>
-        <main className='flex justify-center items-center h-screen'>
-          <div className='flex justify-center items-center flex-col'>
-            <Page/>
-            <Page/>
-            <Page/>
-            <Page/>
-            <Page/>
-          </div>
-        </main>
-      </body>
-    </html>
+    <Page/>
   )
 }

@@ -6,7 +6,7 @@ type Props = {
   IconStyle: string;
 };
 
-const Modal: React.FC<Props> = ({ images , defaultImage , IconStyle}) => {
+const ModalItem: React.FC<Props> = ({ images , defaultImage , IconStyle}) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const handleImageClick = (image: string) => {
     setSelectedImage(image);
@@ -63,4 +63,4 @@ const Modal: React.FC<Props> = ({ images , defaultImage , IconStyle}) => {
   );
 };
 
-export default Modal;
+export default ModalItem;
