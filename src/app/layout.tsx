@@ -13,6 +13,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <Page/>
+    <html>
+      <body>
+        <Page/>
+      </body>
+    </html>
   )
 }

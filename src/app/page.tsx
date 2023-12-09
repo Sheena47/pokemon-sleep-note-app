@@ -2,30 +2,24 @@
 import React from 'react';
 import { ThemeProvider } from 'next-themes';
 import { ChangeThemeButton } from './compornents/ChangeThemeButton';
-import ModalMain from './compornents/Modal/ModalMain';
+import Card from './compornents/Card';
 
 const Page: React.FC = () => {
-  // 他のコードやコンポーネントをここに追加
-
   return (
-    <html>
-      <body className='dark:bg-gray-800'>
-        <ThemeProvider attribute="class" defaultTheme="light">
-          <main className='h-screen flex justify-center items-center dark:bg-gray-800'>
-            <div className='flex justify-center items-center flex-col'>
-              <header className='flex justify-end w-full'>
-                <ChangeThemeButton />
-              </header>
-              <ModalMain/>
-              <ModalMain/>
-              <ModalMain/>
-              <ModalMain/>
-              <ModalMain/>
-            </div>
-          </main>
-        </ThemeProvider>
-      </body>
-    </html>
+    <ThemeProvider attribute="class" defaultTheme="light">
+      <header className='flex justify-end w-full border-b border-b-gray-700 bg-slate-300/90 dark:bg-slate-900/90'>
+        <ChangeThemeButton />
+      </header>
+      <main className='h-screen flex justify-center bg-slate-300 dark:bg-slate-900'>
+        <div className='flex flex-col'>
+          <Card/>
+          <Card/>
+          <Card/>
+          <Card/>
+          <Card/>
+        </div>
+      </main>
+    </ThemeProvider>
   );
 };
 

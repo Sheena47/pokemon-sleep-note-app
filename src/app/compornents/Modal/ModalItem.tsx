@@ -20,9 +20,9 @@ const ModalItem: React.FC<Props> = ({ images, defaultImage, IconStyle }) => {
   };
 
   return (
-    <div className="flex items-center justify-center bg-black bg-opacity-75 min-w-12">
+    <div className="flex items-center justify-center bg-opacity-75 min-w-12">
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75">
+        <div className="fixed inset-0 flex items-center justify-center">
           <div className="grid grid-cols-3 gap-4">
             {images.map((image) => (
               <img
