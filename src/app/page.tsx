@@ -7,10 +7,10 @@ import Card from './compornents/Card';
 const Page: React.FC = () => {
   return (
     <ThemeProvider attribute="class" defaultTheme="light">
-      <header className='flex justify-end w-full border-b border-b-gray-700 bg-slate-300/90 dark:bg-slate-900/90'>
+      <header className='flex justify-end w-full max-w-[650px] mt-4 bg-slate-300/90 dark:bg-slate-900/90'>
         <ChangeThemeButton />
       </header>
-      <main className='h-screen flex justify-center bg-slate-300 dark:bg-slate-900'>
+      <main className='flex justify-center bg-slate-300 dark:bg-slate-900'>
         <div className='flex flex-col'>
           <Card/>
           <Card/>

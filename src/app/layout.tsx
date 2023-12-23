@@ -13,8 +13,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html>
-      <body>
+    <html suppressHydrationWarning>
+      <body className='flex flex-col items-center bg-slate-300 dark:bg-slate-900'>
         <Page/>
       </body>
     </html>

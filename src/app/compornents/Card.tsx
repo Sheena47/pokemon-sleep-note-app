@@ -25,7 +25,7 @@ const Card = () => {
       };
 
     return (
-        <div className='flex justify-center flex-col mb-2 bg-slate-200 w-screen max-w-[650px] dark:bg-slate-800/90'>
+        <div className='flex justify-center flex-col mb-2  w-screen max-w-[650px] rounded bg-slate-200 dark:bg-slate-800'>
             <div className='flex justify-end'>
                 {/* <Image src='/gadget24-removebg-preview.png' alt='Modal Icon' width={40} height={40} /> */}
                 {/* <MemoInput memo={memo} onMemoChange={handleMemoChange} /> */}

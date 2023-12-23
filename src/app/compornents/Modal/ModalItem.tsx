@@ -20,16 +20,16 @@ const ModalItem: React.FC<Props> = ({ images, defaultImage, IconStyle }) => {
   };
 
   return (
-    <div className="flex items-center justify-center bg-opacity-75 min-w-12">
+    <div className="flex items-center justify-center bg-opacity-75">
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center">
+        <div className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
           <div className="grid grid-cols-3 gap-4">
             {images.map((image) => (
               <img
                 key={image}
                 src={image}
                 alt="サムネイル"
-                className="rounded-full cursor-pointer"
+                className="rounded-full cursor-pointer max-h-24"
                 onClick={() => {
                   setSelectedImage(image);
                   handleCloseModal();
@@ -38,7 +38,7 @@ const ModalItem: React.FC<Props> = ({ images, defaultImage, IconStyle }) => {
             ))}
             <button
               onClick={handleCloseModal}
-              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md"
+              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md h-12"
             >
               閉じる
             </button>
