@@ -12,63 +12,38 @@ const defaultBerry = '/berries/leppaberry.png'
 const options = ['エナジーチャージS', 'エナジーチャージM', 'ゆめのかけらゲットS', 'げんきエールS', 'げんきチャージS', 'げんきオールS', 'おてつだいサポートS', '食材ゲットS', '料理パワーアップS', 'ゆびをふる'];
 
 const Card = () => {
-    const [selectedPokemon, setSelectedPokemon] = useState<string | null>(null);
-    const [selectedBerry, setSelectedBerry] = useState<string | null>(null);
-    const [selectedIngredient1, setSelectedIngredient1] = useState<string | null>(null);
-    const [selectedIngredient2, setSelectedIngredient2] = useState<string | null>(null);
-    const [selectedIngredient3, setSelectedIngredient3] = useState<string | null>(null);
+    const [selectedItems, setSelectedItems] = useState<{ [key: string]: string | null }>({
+        pokemon: null,
+        berry: null,
+        ingredient1: null,
+        ingredient2: null,
+        ingredient3: null,
+    });
+    const [modalOpen, setModalOpen] = useState<{ [key: string]: boolean }>({
+        pokemon: false,
+        berry: false,
+        ingredient1: false,
+        ingredient2: false,
+        ingredient3: false,
+        textArea: false,
+    });
 
-    const [isPokemonModalOpen, setIsPokemonModalOpen] = useState(false);
-    const [isBerryModalOpen, setIsBerryModalOpen] = useState(false);
-    const [isIngredient1ModalOpen, setIsIngredient1ModalOpen] = useState(false);
-    const [isIngredient2ModalOpen, setIsIngredient2ModalOpen] = useState(false);
-    const [isIngredient3ModalOpen, setIsIngredient3ModalOpen] = useState(false);
-    const [isTextAreaModalOpen, setIsTextAreaModalOpen] = useState(false);
-
-    const handlePokemonClick = (image: string) => {
-        setSelectedPokemon(image);
-        setIsPokemonModalOpen(true);
-    };
-    const handlePokemonCloseModal = () => {
-        setIsPokemonModalOpen(false);
-    };
-
-    const handleBerryClick = (image: string) => {
-        setSelectedBerry(image);
-        setIsBerryModalOpen(true);
-    };
-    const handleBerryCloseModal = () => {
-        setIsBerryModalOpen(false);
+    const handleItemClick = (type: string, image: string) => {
+        setSelectedItems(prev => ({ ...prev, [type]: image }));
     };
     
-    const handleIngredient1Click = (image: string) => {
-        setSelectedIngredient1(image);
-        setIsIngredient1ModalOpen(true);
-    };
-    const handleIngredient1CloseModal = () => {
-        setIsIngredient1ModalOpen(false);
+    const handleOpenModal = (type: string) => {
+        setModalOpen(prev => ({ ...prev, [type]: true }));
     };
 
-    const handleIngredient2Click = (image: string) => {
-        setSelectedIngredient2(image);
-        setIsIngredient2ModalOpen(true);
-    };
-    const handleIngredient2CloseModal = () => {
-        setIsIngredient2ModalOpen(false);
-    };
-
-    const handleIngredient3Click = (image: string) => {
-        setSelectedIngredient3(image);
-        setIsIngredient3ModalOpen(true);
-    };
-    const handleIngredient3CloseModal = () => {
-        setIsIngredient3ModalOpen(false)
+    const handleCloseModal = (item: string) => {
+        setModalOpen(prevState => ({ ...prevState, [item]: false }));
     };
 
     const handleTextAreaToggleModal = () => {
-        setIsTextAreaModalOpen(!isTextAreaModalOpen);
-      };
-    
+        setModalOpen(prevState => ({ ...prevState, textArea: !prevState.textArea }));
+    };
+
   return (
     <div className='flex justify-center flex-col mb-2  w-screen max-w-[650px] rounded bg-slate-200 dark:bg-slate-800'>
         <div className='flex justify-end'>
@@ -79,7 +54,7 @@ const Card = () => {
                 height={40}
                 onClick={handleTextAreaToggleModal}
             />
-            {isTextAreaModalOpen && (
+            {modalOpen.textArea && (
                 <div className='flex flex-col justify-center fixed inset-0 bg-slate-900/90'>
                     <button
                         className='absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-4xl'
@@ -89,43 +64,43 @@ const Card = () => {
                     </button>
                     <div className='flex'>
                         <Image
-                            src={selectedPokemon || defaultPokemon}
-                            alt={selectedPokemon ? "選択した画像" : "デフォルトの画像"}
+                            src={selectedItems.pokemon || defaultPokemon}
+                            alt={selectedItems.pokemon ? "選択した画像" : "デフォルトの画像"}
                             className="rounded-full max-h-[80px]"
                             width={80}
                             height={80}
-                            onClick={() => handlePokemonClick(selectedPokemon || defaultPokemon)}
+                            onClick={() => handleItemClick('pokemon', selectedItems.pokemon || defaultPokemon)}
                         />
                         <Image
-                                src={selectedBerry || defaultBerry}
-                                alt={selectedBerry ? "選択した画像" : "デフォルトの画像"}
+                                src={selectedItems.berry || defaultBerry}
+                                alt={selectedItems.berry ? "選択した画像" : "デフォルトの画像"}
                                 width={40}
                                 height={40}
                                 className="rounded-full max-h-[40px]"
-                                onClick={() => handleBerryClick(selectedBerry || defaultBerry)}
+                                onClick={() => handleItemClick('berry', selectedItems.berry || defaultBerry)}
                             />
                         <Image
-                            src={selectedIngredient1 || defaultIngredient}
-                            alt={selectedIngredient1 ? "選択した画像" : "デフォルトの画像"}
+                            src={selectedItems.ingredient1 || defaultIngredient}
+                            alt={selectedItems.ingredient1 ? "選択した画像" : "デフォルトの画像"}
                             width={40}
                             height={40}
-                            onClick={() => handleIngredient1Click(selectedIngredient1 || defaultIngredient)}
+                            onClick={() => handleItemClick('ingredient1', selectedItems.ingredient1 || defaultIngredient)}
                             className="rounded-full max-h-[40px]"
                         />
                         <Image
-                            src={selectedIngredient2 || defaultIngredient}
-                            alt={selectedIngredient2 ? "選択した画像" : "デフォルトの画像"}
+                            src={selectedItems.ingredient2 || defaultIngredient}
+                            alt={selectedItems.ingredient2 ? "選択した画像" : "デフォルトの画像"}
                             width={40}
                             height={40}
-                            onClick={() => handleIngredient2Click(selectedIngredient2 || defaultIngredient)}
+                            onClick={() => handleItemClick('ingredient2', selectedItems.ingredient2 || defaultIngredient)}
                             className="rounded-full max-h-[40px]"
                         />
                         <Image
-                            src={selectedIngredient3 || defaultIngredient}
-                            alt={selectedIngredient3 ? "選択した画像" : "デフォルトの画像"}
+                            src={selectedItems.ingredient3 || defaultIngredient}
+                            alt={selectedItems.ingredient3 ? "選択した画像" : "デフォルトの画像"}
                             width={40}
                             height={40}
-                            onClick={() => handleIngredient3Click(selectedIngredient3 || defaultIngredient)}
+                            onClick={() => handleItemClick('ingredient3', selectedItems.ingredient3 || defaultIngredient)}
                             className="rounded-full max-h-[40px]"
                         />
                     </div>
@@ -141,7 +116,7 @@ const Card = () => {
         </div>
         {/* pokemons */}
         <div className="flex items-center justify-center bg-opacity-75">
-            {isPokemonModalOpen && (
+            {modalOpen.pokemon && (
                 <div className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
                     <div className="grid grid-cols-3 gap-4">
                         {pokemons.map((image) => (
@@ -153,13 +128,13 @@ const Card = () => {
                                 height={80}
                                 className="rounded-full cursor-pointer"
                                 onClick={() => {
-                                setSelectedPokemon(image);
-                                handlePokemonCloseModal();
+                                handleItemClick('pokemon', image);
+                                handleCloseModal('pokemon');
                                 }}
                             />
                         ))}
                         <button
-                        onClick={handlePokemonCloseModal}
+                        onClick={() => handleCloseModal('pokemon')}
                         className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md h-12"
                         >
                         閉じる
@@ -168,12 +143,12 @@ const Card = () => {
                 </div>
             )}
             <Image
-                src={selectedPokemon || defaultPokemon}
-                alt={selectedPokemon ? "選択した画像" : "デフォルトの画像"}
+                src={selectedItems.pokemon || defaultPokemon}
+                alt={selectedItems.pokemon ? "選択した画像" : "デフォルトの画像"}
                 className="rounded-full max-h-[80px]"
                 width={80}
                 height={80}
-                onClick={() => handlePokemonClick(selectedPokemon || defaultPokemon)}
+                onClick={() =>handleOpenModal('pokemon')}
             />
         </div>
         <div className='flex justify-between'>
@@ -183,7 +158,7 @@ const Card = () => {
             <div className='flex'>
                 {/* berry */}
                 <div className="flex items-center justify-center bg-opacity-75">
-                    {isBerryModalOpen && (
+                    {modalOpen.berry && (
                         <div className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
                             <div className="grid grid-cols-3 gap-4">
                                 {berries.map((image) => (
@@ -195,13 +170,13 @@ const Card = () => {
                                         height={80}
                                         className="rounded-full cursor-pointer"
                                         onClick={() => {
-                                            setSelectedBerry(image);
-                                            handleBerryCloseModal();
+                                            handleItemClick('berry', image);
+                                            handleCloseModal('berry');
                                         }}
                                     />
                                 ))}
                                 <button
-                                onClick={handleBerryCloseModal}
+                                onClick={() => handleCloseModal('berry')}
                                 className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md h-12"
                                 >
                                 閉じる
@@ -210,17 +185,17 @@ const Card = () => {
                         </div>
                     )}
                     <Image
-                        src={selectedBerry || defaultBerry}
-                        alt={selectedBerry ? "選択した画像" : "デフォルトの画像"}
+                        src={selectedItems.berry || defaultBerry}
+                        alt={selectedItems.berry ? "選択した画像" : "デフォルトの画像"}
                         width={40}
                         height={40}
                         className="rounded-full max-h-[40px]"
-                        onClick={() => handleBerryClick(selectedBerry || defaultBerry)}
+                        onClick={() => handleOpenModal('berry')}
                     />
                 </div>
                 {/* Ingredient */}
                 <div className="flex items-center justify-center bg-opacity-75">
-                    {isIngredient1ModalOpen && (
+                    {modalOpen.ingredient1 && (
                         <div className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
                             <div className="grid grid-cols-3 gap-4">
                                 {ingredients.map((image) => (
@@ -232,14 +207,14 @@ const Card = () => {
                                         height={80}
                                         className="rounded-full cursor-pointer"
                                         onClick={() => {
-                                            setSelectedIngredient1(image);
-                                            handleIngredient1CloseModal();
+                                            handleItemClick('ingredient1', image);
+                                            handleCloseModal('ingredient1');
                                         }}
                                     />
                                 ))}
                                 <button
                                 className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md h-12"
-                                onClick={handleIngredient1CloseModal}
+                                onClick={() => handleCloseModal('ingredient1')}
                                 >
                                 閉じる
                                 </button>
@@ -247,16 +222,16 @@ const Card = () => {
                         </div>
                     )}
                     <Image
-                        src={selectedIngredient1 || defaultIngredient}
-                        alt={selectedIngredient1 ? "選択した画像" : "デフォルトの画像"}
+                        src={selectedItems.ingredient1 || defaultIngredient}
+                        alt={selectedItems.ingredient1 ? "選択した画像" : "デフォルトの画像"}
                         width={40}
                         height={40}
-                        onClick={() => handleIngredient1Click(selectedIngredient1 || defaultIngredient)}
+                        onClick={() => handleOpenModal('ingredient1')}
                         className="rounded-full max-h-[40px]"
                     />
                 </div>
                 <div className="flex items-center justify-center bg-opacity-75">
-                    {isIngredient2ModalOpen && (
+                    {modalOpen.ingredient2 && (
                         <div className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
                             <div className="grid grid-cols-3 gap-4">
                                 {ingredients.map((image) => (
@@ -268,13 +243,13 @@ const Card = () => {
                                         width={80}
                                         height={80}
                                         onClick={() => {
-                                            setSelectedIngredient2(image);
-                                            handleIngredient2CloseModal();
+                                            handleItemClick('ingredient2', image);
+                                            handleCloseModal('ingredient2');
                                         }}
                                     />
                                 ))}
                                 <button
-                                onClick={handleIngredient2CloseModal}
+                                onClick={() => handleCloseModal('ingredient2')}
                                 className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md h-12"
                                 >
                                 閉じる
@@ -283,16 +258,16 @@ const Card = () => {
                         </div>
                     )}
                     <Image
-                        src={selectedIngredient2 || defaultIngredient}
-                        alt={selectedIngredient2 ? "選択した画像" : "デフォルトの画像"}
+                        src={selectedItems.ingredient2 || defaultIngredient}
+                        alt={selectedItems.ingredient2 ? "選択した画像" : "デフォルトの画像"}
                         width={40}
                         height={40}
-                        onClick={() => handleIngredient2Click(selectedIngredient2 || defaultIngredient)}
+                        onClick={() => handleOpenModal('ingredient2')}
                         className="rounded-full max-h-[40px]"
                     />
                 </div>
                 <div className="flex items-center justify-center bg-opacity-75">
-                    {isIngredient3ModalOpen && (
+                    {modalOpen.ingredient3 && (
                         <div className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
                             <div className="grid grid-cols-3 gap-4">
                                 {ingredients.map((image) => (
@@ -304,13 +279,13 @@ const Card = () => {
                                         width={80}
                                         height={80}
                                         onClick={() => {
-                                            setSelectedIngredient3(image);
-                                            handleIngredient3CloseModal();
+                                            handleItemClick('ingredient3', image);
+                                            handleCloseModal('ingredient3');
                                         }}
                                     />
                                 ))}
                                 <button
-                                onClick={handleIngredient3CloseModal}
+                                onClick={() => handleCloseModal('ingredient3')}
                                 className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md h-12"
                                 >
                                 閉じる
@@ -319,11 +294,11 @@ const Card = () => {
                         </div>
                     )}
                     <Image
-                        src={selectedIngredient3 || defaultIngredient}
-                        alt={selectedIngredient3 ? "選択した画像" : "デフォルトの画像"}
+                        src={selectedItems.ingredient3 || defaultIngredient}
+                        alt={selectedItems.ingredient3 ? "選択した画像" : "デフォルトの画像"}
                         width={40}
                         height={40}
-                        onClick={() => handleIngredient3Click(selectedIngredient3 || defaultIngredient)}
+                        onClick={() => handleOpenModal('ingredient3')}
                         className="rounded-full max-h-[40px]"
                     />
                 </div>
