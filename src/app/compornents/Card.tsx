@@ -7,8 +7,8 @@ const pokemons = ['/pokemon/001.png', '/pokemon/002.png', '/pokemon/003.png', '/
 const ingredients = ['/Ingredients/beansausage.png', '/Ingredients/fancyapple.png', '/Ingredients/fancyegg.png', '/Ingredients/fieryherb.png', '/Ingredients/greengrasssoybeans.png', '/ingredients/honey.png', '/Ingredients/largeleek.png', '/Ingredients/moomoomilk.png', '/Ingredients/pureoil.png', '/Ingredients/slowpoketail.png', '/ingredients/snoozytomato.png', '/ingredients/softpotato.png', '/Ingredients/soothingcacao.png', '/Ingredients/tastymushroom.png', '/Ingredients/warmingginger.png',];
 const berries = ['/berries/belueberry.png' , '/berries/blukberry.png' , '/berries/cheriberry.png' , '/berries/chestoberry.png' , '/berries/durinberry.png' , '/berries/figyberry.png' , '/berries/grepaberry.png' , '/berries/leppaberry.png' , '/berries/lumberry.png' , '/berries/magoberry.png' , '/berries/oranberry.png' , '/berries/pamtreberry.png' , '/berries/pechaberry.png' , '/berries/persimberry.png' , '/berries/sitrusberry.png' , '/berries/wikiberry.png' , '/berries/yacheberry.png'];
 const defaultPokemon = '/pokemon/001.png';
-const defaultIngredient = '/Ingredients/fancyapple.png'
-const defaultBerry = '/berries/leppaberry.png'
+const defaultIngredient = '/ingredients/honey.png'
+const defaultBerry = '/berries/durinberry.png'
 const options = ['エナジーチャージS', 'エナジーチャージM', 'ゆめのかけらゲットS', 'げんきエールS', 'げんきチャージS', 'げんきオールS', 'おてつだいサポートS', '食材ゲットS', '料理パワーアップS', 'ゆびをふる'];
 
 const Card = () => {
@@ -29,7 +29,17 @@ const Card = () => {
     });
 
     const handleItemClick = (type: string, image: string) => {
-        setSelectedItems(prev => ({ ...prev, [type]: image }));
+        if (type === 'pokemon') {
+            if (['/pokemon/001.png', '/pokemon/002.png', '/pokemon/003.png'].includes(image)) {
+                setSelectedItems(prev => ({ ...prev, [type]: image, berry: '/berries/durinberry.png', ingredient1: '/ingredients/honey.png', ingredient2: '/ingredients/honey.png', ingredient3: '/ingredients/honey.png' }));
+            } else if (['/pokemon/004.png', '/pokemon/005.png', '/pokemon/006.png'].includes(image)) {
+                setSelectedItems(prev => ({ ...prev, [type]: image, berry: '/berries/leppaberry.png', ingredient1: '/ingredients/fieryherb.png', ingredient2: '/ingredients/fieryherb.png', ingredient3: '/ingredients/fieryherb.png' }));
+            } else if (['/pokemon/007.png', '/pokemon/008.png', '/pokemon/009.png'].includes(image)) {
+                setSelectedItems(prev => ({ ...prev, [type]: image, berry: '/berries/oranberry.png', ingredient1: '/Ingredients/moomoomilk.png', ingredient2: '/Ingredients/moomoomilk.png', ingredient3: '/Ingredients/moomoomilk.png' }));
+            }
+        } else {
+            setSelectedItems(prev => ({ ...prev, [type]: image }));
+        }
     };
     
     const handleOpenModal = (type: string) => {
@@ -168,7 +178,35 @@ const Card = () => {
                                         alt="サムネイル"
                                         width={80}
                                         height={80}
-                                        className="rounded-full cursor-pointer"
+                                        className={`
+                                            rounded-full cursor-pointer 
+                                            ${
+                                                selectedItems.pokemon && 
+                                                (
+                                                    selectedItems.pokemon === '/pokemon/001.png' || 
+                                                    selectedItems.pokemon === '/pokemon/002.png' || 
+                                                    selectedItems.pokemon === '/pokemon/003.png'
+                                                ) && 
+                                                image !== '/berries/durinberry.png' 
+                                                ? 'filter brightness-50' 
+                                                : 
+                                                (
+                                                    selectedItems.pokemon === '/pokemon/004.png' || 
+                                                    selectedItems.pokemon === '/pokemon/005.png' || 
+                                                    selectedItems.pokemon === '/pokemon/006.png'
+                                                ) && 
+                                                image !== '/berries/leppaberry.png' 
+                                                ? 'filter brightness-50' 
+                                                : 
+                                                selectedItems.pokemon === '/pokemon/007.png' || 
+                                                selectedItems.pokemon === '/pokemon/008.png' || 
+                                                selectedItems.pokemon === '/pokemon/009.png' 
+                                                ? image !== '/berries/oranberry.png' 
+                                                ? 'filter brightness-50' 
+                                                : ''
+                                                : ''
+                                            }
+                                        `}
                                         onClick={() => {
                                             handleItemClick('berry', image);
                                             handleCloseModal('berry');
@@ -176,10 +214,10 @@ const Card = () => {
                                     />
                                 ))}
                                 <button
-                                onClick={() => handleCloseModal('berry')}
-                                className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md h-12"
+                                    onClick={() => handleCloseModal('berry')}
+                                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md h-12"
                                 >
-                                閉じる
+                                    閉じる
                                 </button>
                             </div>
                         </div>
@@ -205,7 +243,24 @@ const Card = () => {
                                         alt="サムネイル"
                                         width={80}
                                         height={80}
-                                        className="rounded-full cursor-pointer"
+                                        className={`rounded-full cursor-pointer ${
+                                            (selectedItems.pokemon === '/pokemon/001.png' || 
+                                            selectedItems.pokemon === '/pokemon/002.png' || 
+                                            selectedItems.pokemon === '/pokemon/003.png') && 
+                                            (image !== '/ingredients/honey.png') 
+                                            ? 'filter brightness-50' 
+                                            : (selectedItems.pokemon === '/pokemon/004.png' || 
+                                            selectedItems.pokemon === '/pokemon/005.png' || 
+                                            selectedItems.pokemon === '/pokemon/006.png') && 
+                                            (image !== '/Ingredients/beansausage.png') 
+                                            ? 'filter brightness-50' 
+                                            : (selectedItems.pokemon === '/pokemon/007.png' || 
+                                            selectedItems.pokemon === '/pokemon/008.png' || 
+                                            selectedItems.pokemon === '/pokemon/009.png') && 
+                                            (image !== '/Ingredients/moomoomilk.png') 
+                                            ? 'filter brightness-50' 
+                                            : ''
+                                        }`}
                                         onClick={() => {
                                             handleItemClick('ingredient1', image);
                                             handleCloseModal('ingredient1');
@@ -213,10 +268,10 @@ const Card = () => {
                                     />
                                 ))}
                                 <button
-                                className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md h-12"
-                                onClick={() => handleCloseModal('ingredient1')}
+                                    onClick={() => handleCloseModal('ingredient1')}
+                                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md h-12"
                                 >
-                                閉じる
+                                    閉じる
                                 </button>
                             </div>
                         </div>
@@ -231,32 +286,49 @@ const Card = () => {
                     />
                 </div>
                 <div className="flex items-center justify-center bg-opacity-75">
-                    {modalOpen.ingredient2 && (
-                        <div className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
-                            <div className="grid grid-cols-3 gap-4">
-                                {ingredients.map((image) => (
-                                    <Image
-                                        key={image}
-                                        src={image}
-                                        alt="サムネイル"
-                                        className="rounded-full cursor-pointer"
-                                        width={80}
-                                        height={80}
-                                        onClick={() => {
-                                            handleItemClick('ingredient2', image);
-                                            handleCloseModal('ingredient2');
-                                        }}
-                                    />
-                                ))}
-                                <button
+                {modalOpen.ingredient2 && (
+                    <div className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
+                        <div className="grid grid-cols-3 gap-4">
+                            {ingredients.map((image) => (
+                                <Image
+                                    key={image}
+                                    src={image}
+                                    alt="サムネイル"
+                                    width={80}
+                                    height={80}
+                                    className={`rounded-full cursor-pointer ${
+                                        (selectedItems.pokemon === '/pokemon/001.png' || 
+                                        selectedItems.pokemon === '/pokemon/002.png' || 
+                                        selectedItems.pokemon === '/pokemon/003.png') && 
+                                        (image !== '/ingredients/honey.png' && image !== '/ingredients/snoozytomato.png') 
+                                        ? 'filter brightness-50' 
+                                        : (selectedItems.pokemon === '/pokemon/004.png' || 
+                                        selectedItems.pokemon === '/pokemon/005.png' || 
+                                        selectedItems.pokemon === '/pokemon/006.png') && 
+                                        (image !== '/Ingredients/beansausage.png' && image !== '/Ingredients/warmingginger.png') 
+                                        ? 'filter brightness-50' 
+                                        : (selectedItems.pokemon === '/pokemon/007.png' || 
+                                        selectedItems.pokemon === '/pokemon/008.png' || 
+                                        selectedItems.pokemon === '/pokemon/009.png') && 
+                                        (image !== '/Ingredients/moomoomilk.png' && image !== '/Ingredients/soothingcacao.png') 
+                                        ? 'filter brightness-50' 
+                                        : ''
+                                    }`}
+                                    onClick={() => {
+                                        handleItemClick('ingredient2', image);
+                                        handleCloseModal('ingredient2');
+                                    }}
+                                />
+                            ))}
+                            <button
                                 onClick={() => handleCloseModal('ingredient2')}
                                 className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md h-12"
-                                >
+                            >
                                 閉じる
-                                </button>
-                            </div>
+                            </button>
                         </div>
-                    )}
+                    </div>
+                )}
                     <Image
                         src={selectedItems.ingredient2 || defaultIngredient}
                         alt={selectedItems.ingredient2 ? "選択した画像" : "デフォルトの画像"}
@@ -275,9 +347,26 @@ const Card = () => {
                                         key={image}
                                         src={image}
                                         alt="サムネイル"
-                                        className="rounded-full cursor-pointer"
                                         width={80}
                                         height={80}
+                                        className={`rounded-full cursor-pointer ${
+                                            (selectedItems.pokemon === '/pokemon/001.png' || 
+                                            selectedItems.pokemon === '/pokemon/002.png' || 
+                                            selectedItems.pokemon === '/pokemon/003.png') && 
+                                            (image !== '/ingredients/honey.png' && image !== '/ingredients/snoozytomato.png' && image !== '/ingredients/softpotato.png') 
+                                            ? 'filter brightness-50' 
+                                            : (selectedItems.pokemon === '/pokemon/004.png' || 
+                                            selectedItems.pokemon === '/pokemon/005.png' || 
+                                            selectedItems.pokemon === '/pokemon/006.png') && 
+                                            (image !== '/Ingredients/beansausage.png' && image !== '/Ingredients/warmingginger.png' && image !== '/Ingredients/fieryherb.png') 
+                                            ? 'filter brightness-50' 
+                                            : (selectedItems.pokemon === '/pokemon/007.png' || 
+                                            selectedItems.pokemon === '/pokemon/008.png' || 
+                                            selectedItems.pokemon === '/pokemon/009.png') && 
+                                            (image !== '/Ingredients/moomoomilk.png' && image !== '/Ingredients/soothingcacao.png' && image !== '/Ingredients/beansausage.png') 
+                                            ? 'filter brightness-50' 
+                                            : ''
+                                        }`}
                                         onClick={() => {
                                             handleItemClick('ingredient3', image);
                                             handleCloseModal('ingredient3');
@@ -285,10 +374,10 @@ const Card = () => {
                                     />
                                 ))}
                                 <button
-                                onClick={() => handleCloseModal('ingredient3')}
-                                className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md h-12"
+                                    onClick={() => handleCloseModal('ingredient3')}
+                                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md h-12"
                                 >
-                                閉じる
+                                    閉じる
                                 </button>
                             </div>
                         </div>
