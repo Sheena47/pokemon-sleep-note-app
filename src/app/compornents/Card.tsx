@@ -33,7 +33,7 @@ const Card = () => {
             if (['/pokemon/001.png', '/pokemon/002.png', '/pokemon/003.png'].includes(image)) {
                 setSelectedItems(prev => ({ ...prev, [type]: image, berry: '/berries/durinberry.png', ingredient1: '/ingredients/honey.png', ingredient2: '/ingredients/honey.png', ingredient3: '/ingredients/honey.png' }));
             } else if (['/pokemon/004.png', '/pokemon/005.png', '/pokemon/006.png'].includes(image)) {
-                setSelectedItems(prev => ({ ...prev, [type]: image, berry: '/berries/leppaberry.png', ingredient1: '/ingredients/fieryherb.png', ingredient2: '/ingredients/fieryherb.png', ingredient3: '/ingredients/fieryherb.png' }));
+                setSelectedItems(prev => ({ ...prev, [type]: image, berry: '/berries/leppaberry.png', ingredient1: '/Ingredients/beansausage.png', ingredient2: '/Ingredients/beansausage.png', ingredient3: '/Ingredients/beansausage.png' }));
             } else if (['/pokemon/007.png', '/pokemon/008.png', '/pokemon/009.png'].includes(image)) {
                 setSelectedItems(prev => ({ ...prev, [type]: image, berry: '/berries/oranberry.png', ingredient1: '/Ingredients/moomoomilk.png', ingredient2: '/Ingredients/moomoomilk.png', ingredient3: '/Ingredients/moomoomilk.png' }));
             }
