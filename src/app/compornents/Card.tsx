@@ -1,17 +1,48 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Dropdown from './Dropdown';
 import Image from 'next/image';
 import TextArea from './TextArea';
 
-const pokemons = ['/pokemon/001.png', '/pokemon/002.png', '/pokemon/003.png', '/pokemon/004.png', '/pokemon/005.png', '/pokemon/006.png', '/pokemon/007.png', '/pokemon/008.png', '/pokemon/009.png',];
-const ingredients = ['/Ingredients/beansausage.png', '/Ingredients/fancyapple.png', '/Ingredients/fancyegg.png', '/Ingredients/fieryherb.png', '/Ingredients/greengrasssoybeans.png', '/ingredients/honey.png', '/Ingredients/largeleek.png', '/Ingredients/moomoomilk.png', '/Ingredients/pureoil.png', '/Ingredients/slowpoketail.png', '/ingredients/snoozytomato.png', '/ingredients/softpotato.png', '/Ingredients/soothingcacao.png', '/Ingredients/tastymushroom.png', '/Ingredients/warmingginger.png',];
-const berries = ['/berries/belueberry.png' , '/berries/blukberry.png' , '/berries/cheriberry.png' , '/berries/chestoberry.png' , '/berries/durinberry.png' , '/berries/figyberry.png' , '/berries/grepaberry.png' , '/berries/leppaberry.png' , '/berries/lumberry.png' , '/berries/magoberry.png' , '/berries/oranberry.png' , '/berries/pamtreberry.png' , '/berries/pechaberry.png' , '/berries/persimberry.png' , '/berries/sitrusberry.png' , '/berries/wikiberry.png' , '/berries/yacheberry.png'];
 const defaultPokemon = '/pokemon/001.png';
 const defaultIngredient = '/ingredients/honey.png'
 const defaultBerry = '/berries/durinberry.png'
 const options = ['エナジーチャージS', 'エナジーチャージM', 'ゆめのかけらゲットS', 'げんきエールS', 'げんきチャージS', 'げんきオールS', 'おてつだいサポートS', '食材ゲットS', '料理パワーアップS', 'ゆびをふる'];
 
 const Card = () => {
+    const [pokemonImages, setPokemonImages] = useState<string[]>([]);
+    const [ingredientImages, setIngredientImages] = useState<string[]>([]);
+    const [berryImages, setBerryImages] = useState<string[]>([]);
+    
+    useEffect(() => {
+        const fetchPokemonImages = async () => {
+            const response = await fetch('http://localhost:3000/api/getPokemonImages');
+            const data = await response.json();
+            setPokemonImages(data.pokemonImages);
+            // 取得した画像パスの配列を使って必要な処理を行う
+        };
+        fetchPokemonImages();
+    }, []);
+    
+    useEffect(() => {
+        const fetchIngredientImages = async () => {
+            const response = await fetch('http://localhost:3000/api/getIngredientImages');
+            const data = await response.json();
+            setIngredientImages(data.ingredientImages);
+            // 取得した画像パスの配列を使って必要な処理を行う
+        };
+        fetchIngredientImages();
+    }, []);
+    
+    useEffect(() => {
+        const fetchBerryImages = async () => {
+            const response = await fetch('http://localhost:3000/api/getBerryImages');
+            const data = await response.json();
+            setBerryImages(data.berryImages);
+            // 取得した画像パスの配列を使って必要な処理を行う
+        };
+        fetchBerryImages();
+    }, []);
+    
     const [selectedItems, setSelectedItems] = useState<{ [key: string]: string | null }>({
         pokemon: null,
         berry: null,
@@ -30,13 +61,38 @@ const Card = () => {
 
     const handleItemClick = (type: string, image: string) => {
         if (type === 'pokemon') {
-            if (['/pokemon/001.png', '/pokemon/002.png', '/pokemon/003.png'].includes(image)) {
-                setSelectedItems(prev => ({ ...prev, [type]: image, berry: '/berries/durinberry.png', ingredient1: '/ingredients/honey.png', ingredient2: '/ingredients/honey.png', ingredient3: '/ingredients/honey.png' }));
-            } else if (['/pokemon/004.png', '/pokemon/005.png', '/pokemon/006.png'].includes(image)) {
-                setSelectedItems(prev => ({ ...prev, [type]: image, berry: '/berries/leppaberry.png', ingredient1: '/Ingredients/beansausage.png', ingredient2: '/Ingredients/beansausage.png', ingredient3: '/Ingredients/beansausage.png' }));
-            } else if (['/pokemon/007.png', '/pokemon/008.png', '/pokemon/009.png'].includes(image)) {
-                setSelectedItems(prev => ({ ...prev, [type]: image, berry: '/berries/oranberry.png', ingredient1: '/Ingredients/moomoomilk.png', ingredient2: '/Ingredients/moomoomilk.png', ingredient3: '/Ingredients/moomoomilk.png' }));
-            }
+            const berryMap: { [key: string]: string } = {
+                '/pokemon/001.png': '/berries/durinberry.png',
+                '/pokemon/002.png': '/berries/durinberry.png',
+                '/pokemon/003.png': '/berries/durinberry.png',
+                '/pokemon/004.png': '/berries/leppaberry.png',
+                '/pokemon/005.png': '/berries/leppaberry.png',
+                '/pokemon/006.png': '/berries/leppaberry.png',
+                '/pokemon/007.png': '/berries/oranberry.png',
+                '/pokemon/008.png': '/berries/oranberry.png',
+                '/pokemon/009.png': '/berries/oranberry.png',
+            };
+            const ingredientMap: { [key: string]: string } = {
+                '/pokemon/001.png': '/ingredients/honey.png',
+                '/pokemon/002.png': '/ingredients/honey.png',
+                '/pokemon/003.png': '/ingredients/honey.png',
+                '/pokemon/004.png': '/Ingredients/beansausage.png',
+                '/pokemon/005.png': '/Ingredients/beansausage.png',
+                '/pokemon/006.png': '/Ingredients/beansausage.png',
+                '/pokemon/007.png': '/Ingredients/moomoomilk.png',
+                '/pokemon/008.png': '/Ingredients/moomoomilk.png',
+                '/pokemon/009.png': '/Ingredients/moomoomilk.png',
+            };
+            const selectedBerry = berryMap[image] || '/berries/durinberry.png';
+            const selectedIngredient = ingredientMap[image] || '/ingredients/honey.png';
+            setSelectedItems(prev => ({
+                ...prev,
+                [type]: image,
+                berry: selectedBerry,
+                ingredient1: selectedIngredient,
+                ingredient2: selectedIngredient,
+                ingredient3: selectedIngredient,
+            }));
         } else {
             setSelectedItems(prev => ({ ...prev, [type]: image }));
         }
@@ -127,15 +183,16 @@ const Card = () => {
         {/* pokemons */}
         <div className="flex items-center justify-center bg-opacity-75">
             {modalOpen.pokemon && (
-                <div className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
-                    <div className="grid grid-cols-3 gap-4">
-                        {pokemons.map((image) => (
+                <div onClick={() => handleCloseModal('pokemon')} className="flex justify-center fixed top-0 left-0 pt-12 w-full h-full overflow-y-scroll bg-slate-900/90">
+                    <div className="grid grid-cols-5 gap-4">
+                        {pokemonImages.map((image) => (
                             <Image
                                 key={image}
                                 src={image}
                                 alt="サムネイル"
                                 width={80}
                                 height={80}
+                                priority={true}
                                 className="rounded-full cursor-pointer"
                                 onClick={() => {
                                 handleItemClick('pokemon', image);
@@ -169,9 +226,9 @@ const Card = () => {
                 {/* berry */}
                 <div className="flex items-center justify-center bg-opacity-75">
                     {modalOpen.berry && (
-                        <div className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
+                        <div onClick={() => handleCloseModal('berry')} className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
                             <div className="grid grid-cols-3 gap-4">
-                                {berries.map((image) => (
+                                {berryImages.map((image) => (
                                     <Image
                                         key={image}
                                         src={image}
@@ -234,9 +291,9 @@ const Card = () => {
                 {/* Ingredient */}
                 <div className="flex items-center justify-center bg-opacity-75">
                     {modalOpen.ingredient1 && (
-                        <div className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
+                        <div onClick={() => handleCloseModal('ingredient1')} className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
                             <div className="grid grid-cols-3 gap-4">
-                                {ingredients.map((image) => (
+                                {ingredientImages.map((image) => (
                                     <Image
                                         key={image}
                                         src={image}
@@ -287,9 +344,9 @@ const Card = () => {
                 </div>
                 <div className="flex items-center justify-center bg-opacity-75">
                 {modalOpen.ingredient2 && (
-                    <div className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
+                    <div onClick={() => handleCloseModal('ingredient2')} className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
                         <div className="grid grid-cols-3 gap-4">
-                            {ingredients.map((image) => (
+                            {ingredientImages.map((image) => (
                                 <Image
                                     key={image}
                                     src={image}
@@ -340,9 +397,9 @@ const Card = () => {
                 </div>
                 <div className="flex items-center justify-center bg-opacity-75">
                     {modalOpen.ingredient3 && (
-                        <div className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
+                        <div onClick={() => handleCloseModal('ingredient3')} className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
                             <div className="grid grid-cols-3 gap-4">
-                                {ingredients.map((image) => (
+                                {ingredientImages.map((image) => (
                                     <Image
                                         key={image}
                                         src={image}
