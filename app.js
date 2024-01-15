@@ -8,9 +8,9 @@ const path = require('path');
 app.use(cors());
 
 app.get('/api/getPokemonImages', (req, res) => {
-  const directoryPath = path.join(__dirname, 'public/pokemon');
+  const directoryPath = path.join(__dirname, 'public/pokemons');
   const files = fs.readdirSync(directoryPath).filter(file => file !== '.DS_Store');
-  const imagePaths = files.map(file => `/pokemon/${file}`);
+  const imagePaths = files.map(file => `/pokemons/${file}`);
   res.json({ pokemonImages: imagePaths });
 });
 

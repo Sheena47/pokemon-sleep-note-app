@@ -1,47 +1,51 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Dropdown from './Dropdown';
 import Image from 'next/image';
 import TextArea from './TextArea';
 
-const defaultPokemon = '/pokemon/001.png';
+const defaultPokemon = '/pokemons/001.png';
 const defaultIngredient = '/ingredients/honey.png'
 const defaultBerry = '/berries/durinberry.png'
 const options = ['エナジーチャージS', 'エナジーチャージM', 'ゆめのかけらゲットS', 'げんきエールS', 'げんきチャージS', 'げんきオールS', 'おてつだいサポートS', '食材ゲットS', '料理パワーアップS', 'ゆびをふる'];
+
+const API_ENDPOINTS = {
+    pokemon: 'http://localhost:3000/api/getPokemonImages',
+    ingredient: 'http://localhost:3000/api/getIngredientImages',
+    berry: 'http://localhost:3000/api/getBerryImages',
+};
 
 const Card = () => {
     const [pokemonImages, setPokemonImages] = useState<string[]>([]);
     const [ingredientImages, setIngredientImages] = useState<string[]>([]);
     const [berryImages, setBerryImages] = useState<string[]>([]);
-    
-    useEffect(() => {
-        const fetchPokemonImages = async () => {
-            const response = await fetch('http://localhost:3000/api/getPokemonImages');
+
+    const useFetchData = (url: string, setter: React.Dispatch<React.SetStateAction<string[]>>, key: string) => {
+        useEffect(() => {
+            fetchData(url, setter, key);
+        }, []);
+    }
+
+    // Fetch data from API and update state
+    const fetchData = async (endpoint: string, setState: React.Dispatch<React.SetStateAction<string[]>>, key: string) => {
+        try {
+            const response = await fetch(endpoint);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             const data = await response.json();
-            setPokemonImages(data.pokemonImages);
-            // 取得した画像パスの配列を使って必要な処理を行う
-        };
-        fetchPokemonImages();
-    }, []);
-    
-    useEffect(() => {
-        const fetchIngredientImages = async () => {
-            const response = await fetch('http://localhost:3000/api/getIngredientImages');
-            const data = await response.json();
-            setIngredientImages(data.ingredientImages);
-            // 取得した画像パスの配列を使って必要な処理を行う
-        };
-        fetchIngredientImages();
-    }, []);
-    
-    useEffect(() => {
-        const fetchBerryImages = async () => {
-            const response = await fetch('http://localhost:3000/api/getBerryImages');
-            const data = await response.json();
-            setBerryImages(data.berryImages);
-            // 取得した画像パスの配列を使って必要な処理を行う
-        };
-        fetchBerryImages();
-    }, []);
+            if (data && Array.isArray(data[key])) {
+                setState(data[key]);
+            } else {
+                console.error(`Data from ${endpoint} is not an array.`);
+            }
+        } catch (error) {
+            console.error('Failed to fetch data: ', error);
+        }
+    };
+
+    useFetchData(API_ENDPOINTS.pokemon, setPokemonImages, 'pokemonImages');
+    useFetchData(API_ENDPOINTS.ingredient, setIngredientImages, 'ingredientImages');
+    useFetchData(API_ENDPOINTS.berry, setBerryImages, 'berryImages');
     
     const [selectedItems, setSelectedItems] = useState<{ [key: string]: string | null }>({
         pokemon: null,
@@ -59,29 +63,44 @@ const Card = () => {
         textArea: false,
     });
 
+    const pokemonIngredientMap: { [key: string]: string[][] } = {
+        '/pokemons/001.png': [['/ingredients/honey.png'], ['/ingredients/honey.png'], ['/ingredients/honey.png']],
+        '/pokemons/002.png': [['/ingredients/honey.png'], ['/ingredients/honey.png', '/ingredients/snoozytomato.png'], ['/ingredients/honey.png', '/ingredients/snoozytomato.png']],
+        '/pokemons/003.png': [['/ingredients/honey.png'], ['/ingredients/honey.png', '/ingredients/snoozytomato.png'], ['/ingredients/honey.png', '/ingredients/snoozytomato.png', '/ingredients/softpotato.png']],
+        '/pokemons/004.png': [['/Ingredients/beansausage.png'], ['/ingredients/beansausage.png'], ['/ingredients/beansausage.png']],
+        '/pokemons/005.png': [['/ingredients/beansausage.png'], ['/ingredients/beansausage.png', '/ingredients/warmingginger.png'], ['/ingredients/beansausage.png', '/ingredients/warmingginger.png']],
+        '/pokemons/006.png': [['/ingredients/beansausage.png'], ['/ingredients/beansausage.png', '/ingredients/warmingginger.png'], ['/ingredients/beansausage.png', '/ingredients/warmingginger.png', '/ingredients/softpotato.png']],
+    };
+    
+    const ingredientHighlightMap: { [key: string]: string[] } = {
+        'Ingredient1': ['/ingredients/honey.png'],
+        'Ingredient2': ['/ingredients/honey.png', '/ingredients/snoozytomato.png'],
+        'Ingredient3': ['/ingredients/honey.png', '/ingredients/snoozytomato.png', '/ingredients/softpotato.png'],
+    };
+
     const handleItemClick = (type: string, image: string) => {
         if (type === 'pokemon') {
             const berryMap: { [key: string]: string } = {
-                '/pokemon/001.png': '/berries/durinberry.png',
-                '/pokemon/002.png': '/berries/durinberry.png',
-                '/pokemon/003.png': '/berries/durinberry.png',
-                '/pokemon/004.png': '/berries/leppaberry.png',
-                '/pokemon/005.png': '/berries/leppaberry.png',
-                '/pokemon/006.png': '/berries/leppaberry.png',
-                '/pokemon/007.png': '/berries/oranberry.png',
-                '/pokemon/008.png': '/berries/oranberry.png',
-                '/pokemon/009.png': '/berries/oranberry.png',
+                '/pokemons/001.png': '/berries/durinberry.png',
+                '/pokemons/002.png': '/berries/durinberry.png',
+                '/pokemons/003.png': '/berries/durinberry.png',
+                '/pokemons/004.png': '/berries/leppaberry.png',
+                '/pokemons/005.png': '/berries/leppaberry.png',
+                '/pokemons/006.png': '/berries/leppaberry.png',
+                '/pokemons/007.png': '/berries/oranberry.png',
+                '/pokemons/008.png': '/berries/oranberry.png',
+                '/pokemons/009.png': '/berries/oranberry.png',
             };
             const ingredientMap: { [key: string]: string } = {
-                '/pokemon/001.png': '/ingredients/honey.png',
-                '/pokemon/002.png': '/ingredients/honey.png',
-                '/pokemon/003.png': '/ingredients/honey.png',
-                '/pokemon/004.png': '/Ingredients/beansausage.png',
-                '/pokemon/005.png': '/Ingredients/beansausage.png',
-                '/pokemon/006.png': '/Ingredients/beansausage.png',
-                '/pokemon/007.png': '/Ingredients/moomoomilk.png',
-                '/pokemon/008.png': '/Ingredients/moomoomilk.png',
-                '/pokemon/009.png': '/Ingredients/moomoomilk.png',
+                '/pokemons/001.png': '/ingredients/honey.png',
+                '/pokemons/002.png': '/ingredients/honey.png',
+                '/pokemons/003.png': '/ingredients/honey.png',
+                '/pokemons/004.png': '/Ingredients/beansausage.png',
+                '/pokemons/005.png': '/Ingredients/beansausage.png',
+                '/pokemons/006.png': '/Ingredients/beansausage.png',
+                '/pokemons/007.png': '/Ingredients/moomoomilk.png',
+                '/pokemons/008.png': '/Ingredients/moomoomilk.png',
+                '/pokemons/009.png': '/Ingredients/moomoomilk.png',
             };
             const selectedBerry = berryMap[image] || '/berries/durinberry.png';
             const selectedIngredient = ingredientMap[image] || '/ingredients/honey.png';
@@ -288,7 +307,7 @@ const Card = () => {
                         onClick={() => handleOpenModal('berry')}
                     />
                 </div>
-                {/* Ingredient */}
+                {/* Ingredient1 */}
                 <div className="flex items-center justify-center bg-opacity-75">
                     {modalOpen.ingredient1 && (
                         <div onClick={() => handleCloseModal('ingredient1')} className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
@@ -301,22 +320,9 @@ const Card = () => {
                                         width={80}
                                         height={80}
                                         className={`rounded-full cursor-pointer ${
-                                            (selectedItems.pokemon === '/pokemon/001.png' || 
-                                            selectedItems.pokemon === '/pokemon/002.png' || 
-                                            selectedItems.pokemon === '/pokemon/003.png') && 
-                                            (image !== '/ingredients/honey.png') 
-                                            ? 'filter brightness-50' 
-                                            : (selectedItems.pokemon === '/pokemon/004.png' || 
-                                            selectedItems.pokemon === '/pokemon/005.png' || 
-                                            selectedItems.pokemon === '/pokemon/006.png') && 
-                                            (image !== '/Ingredients/beansausage.png') 
-                                            ? 'filter brightness-50' 
-                                            : (selectedItems.pokemon === '/pokemon/007.png' || 
-                                            selectedItems.pokemon === '/pokemon/008.png' || 
-                                            selectedItems.pokemon === '/pokemon/009.png') && 
-                                            (image !== '/Ingredients/moomoomilk.png') 
-                                            ? 'filter brightness-50' 
-                                            : ''
+                                            selectedItems.pokemon && ['/pokemons/001.png', '/pokemons/002.png', '/pokemons/003.png'].includes(selectedItems.pokemon) && ingredientHighlightMap['Ingredient1'].includes(image)
+                                            ? '' 
+                                            : 'filter brightness-50'
                                         }`}
                                         onClick={() => {
                                             handleItemClick('ingredient1', image);
@@ -342,6 +348,7 @@ const Card = () => {
                         className="rounded-full max-h-[40px]"
                     />
                 </div>
+                {/* Ingredient2 */}
                 <div className="flex items-center justify-center bg-opacity-75">
                 {modalOpen.ingredient2 && (
                     <div onClick={() => handleCloseModal('ingredient2')} className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
@@ -354,22 +361,9 @@ const Card = () => {
                                     width={80}
                                     height={80}
                                     className={`rounded-full cursor-pointer ${
-                                        (selectedItems.pokemon === '/pokemon/001.png' || 
-                                        selectedItems.pokemon === '/pokemon/002.png' || 
-                                        selectedItems.pokemon === '/pokemon/003.png') && 
-                                        (image !== '/ingredients/honey.png' && image !== '/ingredients/snoozytomato.png') 
-                                        ? 'filter brightness-50' 
-                                        : (selectedItems.pokemon === '/pokemon/004.png' || 
-                                        selectedItems.pokemon === '/pokemon/005.png' || 
-                                        selectedItems.pokemon === '/pokemon/006.png') && 
-                                        (image !== '/Ingredients/beansausage.png' && image !== '/Ingredients/warmingginger.png') 
-                                        ? 'filter brightness-50' 
-                                        : (selectedItems.pokemon === '/pokemon/007.png' || 
-                                        selectedItems.pokemon === '/pokemon/008.png' || 
-                                        selectedItems.pokemon === '/pokemon/009.png') && 
-                                        (image !== '/Ingredients/moomoomilk.png' && image !== '/Ingredients/soothingcacao.png') 
-                                        ? 'filter brightness-50' 
-                                        : ''
+                                        selectedItems.pokemon &&['/pokemons/001.png', '/pokemons/002.png', '/pokemons/003.png'].includes(selectedItems.pokemon) && ingredientHighlightMap['Ingredient2'].includes(image)
+                                        ? '' 
+                                        : 'filter brightness-50'
                                     }`}
                                     onClick={() => {
                                         handleItemClick('ingredient2', image);
@@ -395,6 +389,7 @@ const Card = () => {
                         className="rounded-full max-h-[40px]"
                     />
                 </div>
+                {/* Ingredient3 */}
                 <div className="flex items-center justify-center bg-opacity-75">
                     {modalOpen.ingredient3 && (
                         <div onClick={() => handleCloseModal('ingredient3')} className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
@@ -407,22 +402,9 @@ const Card = () => {
                                         width={80}
                                         height={80}
                                         className={`rounded-full cursor-pointer ${
-                                            (selectedItems.pokemon === '/pokemon/001.png' || 
-                                            selectedItems.pokemon === '/pokemon/002.png' || 
-                                            selectedItems.pokemon === '/pokemon/003.png') && 
-                                            (image !== '/ingredients/honey.png' && image !== '/ingredients/snoozytomato.png' && image !== '/ingredients/softpotato.png') 
-                                            ? 'filter brightness-50' 
-                                            : (selectedItems.pokemon === '/pokemon/004.png' || 
-                                            selectedItems.pokemon === '/pokemon/005.png' || 
-                                            selectedItems.pokemon === '/pokemon/006.png') && 
-                                            (image !== '/Ingredients/beansausage.png' && image !== '/Ingredients/warmingginger.png' && image !== '/Ingredients/fieryherb.png') 
-                                            ? 'filter brightness-50' 
-                                            : (selectedItems.pokemon === '/pokemon/007.png' || 
-                                            selectedItems.pokemon === '/pokemon/008.png' || 
-                                            selectedItems.pokemon === '/pokemon/009.png') && 
-                                            (image !== '/Ingredients/moomoomilk.png' && image !== '/Ingredients/soothingcacao.png' && image !== '/Ingredients/beansausage.png') 
-                                            ? 'filter brightness-50' 
-                                            : ''
+                                            selectedItems.pokemon &&['/pokemons/001.png', '/pokemons/002.png', '/pokemons/003.png'].includes(selectedItems.pokemon) && ingredientHighlightMap['Ingredient3'].includes(image)
+                                            ? '' 
+                                            : 'filter brightness-50'
                                         }`}
                                         onClick={() => {
                                             handleItemClick('ingredient3', image);
