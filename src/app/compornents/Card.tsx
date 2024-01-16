@@ -3,9 +3,6 @@ import Dropdown from './Dropdown';
 import Image from 'next/image';
 import TextArea from './TextArea';
 
-const defaultPokemon = '/pokemons/001.png';
-const defaultIngredient = '/ingredients/honey.png'
-const defaultBerry = '/berries/durinberry.png'
 const options = ['エナジーチャージS', 'エナジーチャージM', 'ゆめのかけらゲットS', 'げんきエールS', 'げんきチャージS', 'げんきオールS', 'おてつだいサポートS', '食材ゲットS', '料理パワーアップS', 'ゆびをふる'];
 
 const API_ENDPOINTS = {
@@ -63,15 +60,6 @@ const Card = () => {
         textArea: false,
     });
 
-    const pokemonIngredientMap: { [key: string]: string[][] } = {
-        '/pokemons/001.png': [['/ingredients/honey.png'], ['/ingredients/honey.png'], ['/ingredients/honey.png']],
-        '/pokemons/002.png': [['/ingredients/honey.png'], ['/ingredients/honey.png', '/ingredients/snoozytomato.png'], ['/ingredients/honey.png', '/ingredients/snoozytomato.png']],
-        '/pokemons/003.png': [['/ingredients/honey.png'], ['/ingredients/honey.png', '/ingredients/snoozytomato.png'], ['/ingredients/honey.png', '/ingredients/snoozytomato.png', '/ingredients/softpotato.png']],
-        '/pokemons/004.png': [['/Ingredients/beansausage.png'], ['/ingredients/beansausage.png'], ['/ingredients/beansausage.png']],
-        '/pokemons/005.png': [['/ingredients/beansausage.png'], ['/ingredients/beansausage.png', '/ingredients/warmingginger.png'], ['/ingredients/beansausage.png', '/ingredients/warmingginger.png']],
-        '/pokemons/006.png': [['/ingredients/beansausage.png'], ['/ingredients/beansausage.png', '/ingredients/warmingginger.png'], ['/ingredients/beansausage.png', '/ingredients/warmingginger.png', '/ingredients/softpotato.png']],
-    };
-    
     const ingredientHighlightMap: { [key: string]: string[] } = {
         'Ingredient1': ['/ingredients/honey.png'],
         'Ingredient2': ['/ingredients/honey.png', '/ingredients/snoozytomato.png'],
@@ -129,6 +117,48 @@ const Card = () => {
         setModalOpen(prevState => ({ ...prevState, textArea: !prevState.textArea }));
     };
 
+    const TextAreaModalIcon = ({ type, selectedItem, defaultImage, onClick }: { type: string, selectedItem: string, defaultImage: string, onClick: (type: string, image: string) => void }) => {
+        return (
+            <Image
+                src={selectedItem || defaultImage}
+                alt={selectedItem ? "選択した画像" : "デフォルトの画像"}
+                width={40}
+                height={40}
+                onClick={() => onClick(type, selectedItem || defaultImage)}
+                className="rounded-full max-h-[40px]"
+            />
+        );
+    };
+    
+    const TextAreaModal = ({ selectedItems, onClose }: { selectedItems: any, onClose: () => void }) => {
+        return (
+            <div onClick={onClose} className='flex flex-col items-center justify-center fixed inset-0 bg-slate-900/90'>
+                <div className='w-full max-w-[650px]'>
+                    <button
+                        className='absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-4xl'
+                        onClick={onClose}
+                        >
+                        &#x2715;
+                    </button>
+                    <div className='flex'>
+                        <TextAreaModalIcon type='pokemon' selectedItem={selectedItems.pokemon} defaultImage='/pokemons/001.png' onClick={handleItemClick} />
+                        <TextAreaModalIcon type='berry' selectedItem={selectedItems.berry} defaultImage='/berries/durinberry.png' onClick={handleItemClick} />
+                        <TextAreaModalIcon type='ingredient1' selectedItem={selectedItems.ingredient1} defaultImage='/ingredients/honey.png' onClick={handleItemClick} />
+                        <TextAreaModalIcon type='ingredient2' selectedItem={selectedItems.ingredient2} defaultImage='/ingredients/honey.png' onClick={handleItemClick} />
+                        <TextAreaModalIcon type='ingredient3' selectedItem={selectedItems.ingredient3} defaultImage='/ingredients/honey.png' onClick={handleItemClick} />
+                    </div>
+                    <TextArea
+                        label="Your Label"
+                        placeholder="Type something here..."
+                        rows={5}
+                        maxLength={140}
+                        className='text-white'
+                    />
+                </div>
+            </div>
+        );
+    };
+
   return (
     <div className='flex justify-center flex-col mb-2  w-screen max-w-[650px] rounded bg-slate-200 dark:bg-slate-800'>
         <div className='flex justify-end'>
@@ -140,63 +170,7 @@ const Card = () => {
                 onClick={handleTextAreaToggleModal}
             />
             {modalOpen.textArea && (
-                <div className='flex flex-col justify-center fixed inset-0 bg-slate-900/90'>
-                    <button
-                        className='absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-4xl'
-                        onClick={handleTextAreaToggleModal}
-                        >
-                        &#x2715;
-                    </button>
-                    <div className='flex'>
-                        <Image
-                            src={selectedItems.pokemon || defaultPokemon}
-                            alt={selectedItems.pokemon ? "選択した画像" : "デフォルトの画像"}
-                            className="rounded-full max-h-[80px]"
-                            width={80}
-                            height={80}
-                            onClick={() => handleItemClick('pokemon', selectedItems.pokemon || defaultPokemon)}
-                        />
-                        <Image
-                                src={selectedItems.berry || defaultBerry}
-                                alt={selectedItems.berry ? "選択した画像" : "デフォルトの画像"}
-                                width={40}
-                                height={40}
-                                className="rounded-full max-h-[40px]"
-                                onClick={() => handleItemClick('berry', selectedItems.berry || defaultBerry)}
-                            />
-                        <Image
-                            src={selectedItems.ingredient1 || defaultIngredient}
-                            alt={selectedItems.ingredient1 ? "選択した画像" : "デフォルトの画像"}
-                            width={40}
-                            height={40}
-                            onClick={() => handleItemClick('ingredient1', selectedItems.ingredient1 || defaultIngredient)}
-                            className="rounded-full max-h-[40px]"
-                        />
-                        <Image
-                            src={selectedItems.ingredient2 || defaultIngredient}
-                            alt={selectedItems.ingredient2 ? "選択した画像" : "デフォルトの画像"}
-                            width={40}
-                            height={40}
-                            onClick={() => handleItemClick('ingredient2', selectedItems.ingredient2 || defaultIngredient)}
-                            className="rounded-full max-h-[40px]"
-                        />
-                        <Image
-                            src={selectedItems.ingredient3 || defaultIngredient}
-                            alt={selectedItems.ingredient3 ? "選択した画像" : "デフォルトの画像"}
-                            width={40}
-                            height={40}
-                            onClick={() => handleItemClick('ingredient3', selectedItems.ingredient3 || defaultIngredient)}
-                            className="rounded-full max-h-[40px]"
-                        />
-                    </div>
-                    <TextArea
-                        label="Your Label"
-                        placeholder="Type something here..."
-                        rows={5}
-                        maxLength={140}
-                        className='text-white'
-                    />
-                </div>
+                <TextAreaModal selectedItems={selectedItems} onClose={handleTextAreaToggleModal} />
             )}
         </div>
         {/* pokemons */}
@@ -229,7 +203,7 @@ const Card = () => {
                 </div>
             )}
             <Image
-                src={selectedItems.pokemon || defaultPokemon}
+                src={selectedItems.pokemon || '/pokemons/001.png'}
                 alt={selectedItems.pokemon ? "選択した画像" : "デフォルトの画像"}
                 className="rounded-full max-h-[80px]"
                 width={80}
@@ -299,7 +273,7 @@ const Card = () => {
                         </div>
                     )}
                     <Image
-                        src={selectedItems.berry || defaultBerry}
+                        src={selectedItems.berry || '/berries/durinberry.png'}
                         alt={selectedItems.berry ? "選択した画像" : "デフォルトの画像"}
                         width={40}
                         height={40}
@@ -340,7 +314,7 @@ const Card = () => {
                         </div>
                     )}
                     <Image
-                        src={selectedItems.ingredient1 || defaultIngredient}
+                        src={selectedItems.ingredient1 || '/ingredients/honey.png'}
                         alt={selectedItems.ingredient1 ? "選択した画像" : "デフォルトの画像"}
                         width={40}
                         height={40}
@@ -381,7 +355,7 @@ const Card = () => {
                     </div>
                 )}
                     <Image
-                        src={selectedItems.ingredient2 || defaultIngredient}
+                        src={selectedItems.ingredient2 || '/ingredients/honey.png'}
                         alt={selectedItems.ingredient2 ? "選択した画像" : "デフォルトの画像"}
                         width={40}
                         height={40}
@@ -422,7 +396,7 @@ const Card = () => {
                         </div>
                     )}
                     <Image
-                        src={selectedItems.ingredient3 || defaultIngredient}
+                        src={selectedItems.ingredient3 || '/ingredients/honey.png'}
                         alt={selectedItems.ingredient3 ? "選択した画像" : "デフォルトの画像"}
                         width={40}
                         height={40}
