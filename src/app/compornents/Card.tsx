@@ -11,34 +11,42 @@ const API_ENDPOINTS = {
     berry: 'http://localhost:3000/api/getBerryImages',
 };
 
+const fetchData = async (endpoint: string, setState: React.Dispatch<React.SetStateAction<string[]>>, key: string) => {
+    try {
+        const response = await fetch(endpoint);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        if (data && Array.isArray(data[key])) {
+            setState(data[key]);
+        } else {
+            console.error(`Data from ${endpoint} is not an array.`);
+        }
+    } catch (error) {
+        console.error('Failed to fetch data: ', error);
+    }
+};
+
+const useFetchData = (url: string, setter: React.Dispatch<React.SetStateAction<string[]>>, key: string) => {
+    useEffect(() => {
+        fetchData(url, setter, key);
+    }, [url, setter, key]);
+}
+
+enum ItemTypes {
+    Pokemon = 'pokemon',
+    Berry = 'berry',
+    Ingredient1 = 'ingredient1',
+    Ingredient2 = 'ingredient2',
+    Ingredient3 = 'ingredient3',
+}
+
 const Card = () => {
     const [pokemonImages, setPokemonImages] = useState<string[]>([]);
     const [ingredientImages, setIngredientImages] = useState<string[]>([]);
     const [berryImages, setBerryImages] = useState<string[]>([]);
-
-    const useFetchData = (url: string, setter: React.Dispatch<React.SetStateAction<string[]>>, key: string) => {
-        useEffect(() => {
-            fetchData(url, setter, key);
-        }, []);
-    }
-
-    // Fetch data from API and update state
-    const fetchData = async (endpoint: string, setState: React.Dispatch<React.SetStateAction<string[]>>, key: string) => {
-        try {
-            const response = await fetch(endpoint);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            if (data && Array.isArray(data[key])) {
-                setState(data[key]);
-            } else {
-                console.error(`Data from ${endpoint} is not an array.`);
-            }
-        } catch (error) {
-            console.error('Failed to fetch data: ', error);
-        }
-    };
+    const [itemType, setItemType] = useState<ItemTypes | null>(null);
 
     useFetchData(API_ENDPOINTS.pokemon, setPokemonImages, 'pokemonImages');
     useFetchData(API_ENDPOINTS.ingredient, setIngredientImages, 'ingredientImages');
@@ -51,6 +59,7 @@ const Card = () => {
         ingredient2: null,
         ingredient3: null,
     });
+
     const [modalOpen, setModalOpen] = useState<{ [key: string]: boolean }>({
         pokemon: false,
         berry: false,
@@ -60,53 +69,45 @@ const Card = () => {
         textArea: false,
     });
 
-    const ingredientHighlightMap: { [key: string]: string[] } = {
-        'ingredient1': ['/ingredients/honey.png'],
-        'ingredient2': ['/ingredients/honey.png', '/ingredients/snoozytomato.png'],
-        'ingredient3': ['/ingredients/honey.png', '/ingredients/snoozytomato.png', '/ingredients/softpotato.png'],
-    };
+    const defaultImages = {
+        pokemon: '/pokemons/001.png',
+        berry: '/berries/durinberry.png',
+        ingredient1: '/ingredients/honey.png',
+        ingredient2: '/ingredients/honey.png',
+        ingredient3: '/ingredients/honey.png',
+    };   
 
-    const itemMap: { [key: string]: { berry: string, ingredient: string } } = {
-        '/pokemons/001.png': { berry: '/berries/durinberry.png', ingredient: '/ingredients/honey.png' },
-        '/pokemons/002.png': { berry: '/berries/durinberry.png', ingredient: '/ingredients/honey.png' },
-        '/pokemons/003.png': { berry: '/berries/durinberry.png', ingredient: '/ingredients/honey.png' },
-        '/pokemons/004.png': { berry: '/berries/leppaberry.png', ingredient: '/Ingredients/beansausage.png' },
-        '/pokemons/005.png': { berry: '/berries/leppaberry.png', ingredient: '/Ingredients/beansausage.png' },
-        '/pokemons/006.png': { berry: '/berries/leppaberry.png', ingredient: '/Ingredients/beansausage.png' },
-        '/pokemons/007.png': { berry: '/berries/oranberry.png', ingredient: '/Ingredients/moomoomilk.png' },
-        '/pokemons/008.png': { berry: '/berries/oranberry.png', ingredient: '/Ingredients/moomoomilk.png' },
-        '/pokemons/009.png': { berry: '/berries/oranberry.png', ingredient: '/Ingredients/moomoomilk.png' },
-    };
-
-    const handleItemClick = (type: string, image: string) => {
-        if (type === 'pokemon') {
-            const selectedItem = itemMap[image] || { berry: '/berries/durinberry.png', ingredient: '/ingredients/honey.png' };
-            setSelectedItems(prev => ({
-                ...prev,
-                [type]: image,
-                berry: selectedItem.berry,
-                ingredient1: selectedItem.ingredient,
-                ingredient2: selectedItem.ingredient,
-                ingredient3: selectedItem.ingredient,
-            }));
-        } else {
-            setSelectedItems(prev => ({ ...prev, [type]: image }));
-        }
+    const handleItemClick = (itemType: string, image: string) => {
+        setSelectedItems(prevItems => {
+            let newItems = { ...prevItems, [itemType]: image };
+    
+            if (itemType === 'pokemon') {
+                if (['/pokemons/001.png', '/pokemons/002.png', '/pokemons/003.png'].includes(image)) {
+                    newItems = { ...newItems, 'berry': '/berries/durinberry.png', 'ingredient1': '/ingredients/honey.png', 'ingredient2': '/ingredients/snoozytomato.png', 'ingredient3': '/ingredients/softpotato.png' };
+                } else if (['/pokemons/004.png', '/pokemons/005.png', '/pokemons/006.png'].includes(image)) {
+                    newItems = { ...newItems, 'berry': '/berries/leppaberry.png', 'ingredient1': '/ingredients/beansausage.png', 'ingredient2': '/ingredients/warmingginger.png', 'ingredient3': '/ingredients/fieryherb.png' };
+                } else if (['/pokemons/007.png', '/pokemons/008.png', '/pokemons/009.png'].includes(image)) {
+                    newItems = { ...newItems, 'berry': '/berries/oranberry.png', 'ingredient1': '/ingredients/moomoomilk.png', 'ingredient2': '/ingredients/soothingcacao.png', 'ingredient3': '/ingredients/beansausage.png' };
+                }
+            }
+    
+            return newItems;
+        });
     };
     
-    const handleOpenModal = (type: string) => {
-        setModalOpen(prev => ({ ...prev, [type]: true }));
+      const handleOpenModal = (itemType: ItemTypes) => {
+        setItemType(itemType);
+        setModalOpen(prevState => ({ ...prevState, [itemType]: true }));
     };
-
-    const handleCloseModal = (item: string) => {
-        setModalOpen(prevState => ({ ...prevState, [item]: false }));
+    
+    const handleCloseModal = (itemType: ItemTypes) => {
+        setModalOpen(prevState => ({ ...prevState, [itemType]: false }));
     };
-
     const handleTextAreaToggleModal = () => {
         setModalOpen(prevState => ({ ...prevState, textArea: !prevState.textArea }));
     };
 
-    const TextAreaModalIcon = ({ type, selectedItem, defaultImage, onClick }: { type: string, selectedItem: string, defaultImage: string, onClick: (type: string, image: string) => void }) => {
+    const TextAreaModalIcon = ({ type, selectedItem, defaultImage, onClick }: { type: ItemTypes, selectedItem: string, defaultImage: string, onClick: (type: ItemTypes, image: string) => void }) => {
         return (
             <Image
                 src={selectedItem || defaultImage}
@@ -129,11 +130,11 @@ const Card = () => {
                         &#x2715;
                     </button>
                     <div className='flex'>
-                        <TextAreaModalIcon type='pokemon' selectedItem={selectedItems.pokemon} defaultImage='/pokemons/001.png' onClick={handleItemClick} />
-                        <TextAreaModalIcon type='berry' selectedItem={selectedItems.berry} defaultImage='/berries/durinberry.png' onClick={handleItemClick} />
-                        <TextAreaModalIcon type='ingredient1' selectedItem={selectedItems.ingredient1} defaultImage='/ingredients/honey.png' onClick={handleItemClick} />
-                        <TextAreaModalIcon type='ingredient2' selectedItem={selectedItems.ingredient2} defaultImage='/ingredients/honey.png' onClick={handleItemClick} />
-                        <TextAreaModalIcon type='ingredient3' selectedItem={selectedItems.ingredient3} defaultImage='/ingredients/honey.png' onClick={handleItemClick} />
+                        <TextAreaModalIcon type={ItemTypes.Pokemon} selectedItem={selectedItems.pokemon} defaultImage='/pokemons/001.png' onClick={handleItemClick} />
+                        <TextAreaModalIcon type={ItemTypes.Berry} selectedItem={selectedItems.berry} defaultImage='/berries/durinberry.png' onClick={handleItemClick} />
+                        <TextAreaModalIcon type={ItemTypes.Ingredient1} selectedItem={selectedItems.ingredient1} defaultImage='/ingredients/honey.png' onClick={handleItemClick} />
+                        <TextAreaModalIcon type={ItemTypes.Ingredient2} selectedItem={selectedItems.ingredient2} defaultImage='/ingredients/honey.png' onClick={handleItemClick} />
+                        <TextAreaModalIcon type={ItemTypes.Ingredient3} selectedItem={selectedItems.ingredient3} defaultImage='/ingredients/honey.png' onClick={handleItemClick} />
                     </div>
                     <TextArea
                         label="Your Label"
@@ -147,26 +148,16 @@ const Card = () => {
         );
     };
 
-    const defaultImages = {
-        pokemon: '/pokemons/001.png',
-        berry: '/berries/durinberry.png',
-        ingredient1: '/ingredients/honey.png',
-        ingredient2: '/ingredients/honey.png',
-        ingredient3: '/ingredients/honey.png',
-    };   
-    type ItemType = "pokemon" | "berry" | "ingredient1" | "ingredient2" | "ingredient3";
     type ItemModalProps = {
-        itemType: ItemType;
+        itemType: ItemTypes;
         images: string[];
         selectedItems: any;
-        itemMap: any;
-        ingredientHighlightMap: any;
         modalOpen: any;
         handleCloseModal: any;
         handleItemClick: any;
     }; 
 
-    const ItemModal = ({ itemType, images, selectedItems, itemMap, ingredientHighlightMap, modalOpen, handleCloseModal, handleItemClick }: ItemModalProps) => {
+    const ItemModal = ({ itemType, images, selectedItems, modalOpen, handleCloseModal, handleItemClick }: ItemModalProps) => {
         return (
             <div className="flex items-center justify-center bg-opacity-75">
                 {modalOpen[itemType] && (
@@ -185,11 +176,7 @@ const Card = () => {
                                     width={80}
                                     height={80}
                                     priority={index === 0} // 最初の画像にpriorityを設定
-                                    className={`rounded-full cursor-pointer ${
-                                        (itemType !== 'pokemon' && selectedItems[itemType] && ingredientHighlightMap[itemType]?.includes(image))
-                                        ? '' // 選択された画像の明るさを変更しない
-                                        : (itemType !== 'pokemon' && !['/pokemons/001.png', '/pokemons/002.png', '/pokemons/003.png'].includes(image)) ? 'filter brightness-50' : '' // それ以外の画像の明るさを50%に設定、ただしpokemonの場合は適用しない
-                                    }`}
+                                    className='rounded-full cursor-pointer'
                                     onClick={() => {
                                         handleItemClick(itemType, image);
                                         handleCloseModal(itemType);
@@ -202,10 +189,10 @@ const Card = () => {
                 <Image
                     src={selectedItems[itemType] || defaultImages[itemType]}
                     alt={selectedItems[itemType] ? "選択した画像" : "デフォルトの画像"}
-                    width={itemType === 'pokemon' ? 80 : 40}
-                    height={itemType === 'pokemon' ? 80 : 40}
+                    width={itemType === ItemTypes.Pokemon ? 80 : 40}
+                    height={itemType === ItemTypes.Pokemon ? 80 : 40}
                     onClick={() => handleOpenModal(itemType)}
-                    className={`rounded-full ${itemType === 'pokemon' ? 'max-h-[80px]' : 'max-h-[40px]'}`}
+                    className={`rounded-full ${itemType === ItemTypes.Pokemon ? 'max-h-[80px]' : 'max-h-[40px]'}`}
                 />
             </div>
         );
@@ -225,16 +212,16 @@ const Card = () => {
                     <TextAreaModal selectedItems={selectedItems} onClose={handleTextAreaToggleModal} />
                 )}
             </div>
-            <ItemModal itemType="pokemon" images={pokemonImages} selectedItems={selectedItems} itemMap={itemMap} ingredientHighlightMap={ingredientHighlightMap} modalOpen={modalOpen} handleCloseModal={handleCloseModal} handleItemClick={handleItemClick} />
+                <ItemModal itemType={ItemTypes.Pokemon} images={pokemonImages} selectedItems={selectedItems} modalOpen={modalOpen} handleCloseModal={handleCloseModal} handleItemClick={handleItemClick} />
             <div className='flex justify-between'>
                 <div>
                     <Dropdown options={options} />
                 </div>
                 <div className='flex'>
-                    <ItemModal itemType="berry" images={berryImages} selectedItems={selectedItems} itemMap={itemMap} ingredientHighlightMap={ingredientHighlightMap} modalOpen={modalOpen} handleCloseModal={handleCloseModal} handleItemClick={handleItemClick} />
-                    <ItemModal itemType="ingredient1" images={ingredientImages} selectedItems={selectedItems} itemMap={itemMap} ingredientHighlightMap={ingredientHighlightMap} modalOpen={modalOpen} handleCloseModal={handleCloseModal} handleItemClick={handleItemClick} />
-                    <ItemModal itemType="ingredient2" images={ingredientImages} selectedItems={selectedItems} itemMap={itemMap} ingredientHighlightMap={ingredientHighlightMap} modalOpen={modalOpen} handleCloseModal={handleCloseModal} handleItemClick={handleItemClick} />
-                    <ItemModal itemType="ingredient3" images={ingredientImages} selectedItems={selectedItems} itemMap={itemMap} ingredientHighlightMap={ingredientHighlightMap} modalOpen={modalOpen} handleCloseModal={handleCloseModal} handleItemClick={handleItemClick} />
+                    <ItemModal itemType={ItemTypes.Berry} images={berryImages} selectedItems={selectedItems} modalOpen={modalOpen} handleCloseModal={handleCloseModal} handleItemClick={handleItemClick} />
+                    <ItemModal itemType={ItemTypes.Ingredient1} images={ingredientImages} selectedItems={selectedItems} modalOpen={modalOpen} handleCloseModal={handleCloseModal} handleItemClick={handleItemClick} />
+                    <ItemModal itemType={ItemTypes.Ingredient2} images={ingredientImages} selectedItems={selectedItems} modalOpen={modalOpen} handleCloseModal={handleCloseModal} handleItemClick={handleItemClick} />
+                    <ItemModal itemType={ItemTypes.Ingredient3} images={ingredientImages} selectedItems={selectedItems} modalOpen={modalOpen} handleCloseModal={handleCloseModal} handleItemClick={handleItemClick} />
                 </div>
             </div>
         </div>
