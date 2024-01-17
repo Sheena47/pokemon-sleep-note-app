@@ -61,44 +61,33 @@ const Card = () => {
     });
 
     const ingredientHighlightMap: { [key: string]: string[] } = {
-        'Ingredient1': ['/ingredients/honey.png'],
-        'Ingredient2': ['/ingredients/honey.png', '/ingredients/snoozytomato.png'],
-        'Ingredient3': ['/ingredients/honey.png', '/ingredients/snoozytomato.png', '/ingredients/softpotato.png'],
+        'ingredient1': ['/ingredients/honey.png'],
+        'ingredient2': ['/ingredients/honey.png', '/ingredients/snoozytomato.png'],
+        'ingredient3': ['/ingredients/honey.png', '/ingredients/snoozytomato.png', '/ingredients/softpotato.png'],
+    };
+
+    const itemMap: { [key: string]: { berry: string, ingredient: string } } = {
+        '/pokemons/001.png': { berry: '/berries/durinberry.png', ingredient: '/ingredients/honey.png' },
+        '/pokemons/002.png': { berry: '/berries/durinberry.png', ingredient: '/ingredients/honey.png' },
+        '/pokemons/003.png': { berry: '/berries/durinberry.png', ingredient: '/ingredients/honey.png' },
+        '/pokemons/004.png': { berry: '/berries/leppaberry.png', ingredient: '/Ingredients/beansausage.png' },
+        '/pokemons/005.png': { berry: '/berries/leppaberry.png', ingredient: '/Ingredients/beansausage.png' },
+        '/pokemons/006.png': { berry: '/berries/leppaberry.png', ingredient: '/Ingredients/beansausage.png' },
+        '/pokemons/007.png': { berry: '/berries/oranberry.png', ingredient: '/Ingredients/moomoomilk.png' },
+        '/pokemons/008.png': { berry: '/berries/oranberry.png', ingredient: '/Ingredients/moomoomilk.png' },
+        '/pokemons/009.png': { berry: '/berries/oranberry.png', ingredient: '/Ingredients/moomoomilk.png' },
     };
 
     const handleItemClick = (type: string, image: string) => {
         if (type === 'pokemon') {
-            const berryMap: { [key: string]: string } = {
-                '/pokemons/001.png': '/berries/durinberry.png',
-                '/pokemons/002.png': '/berries/durinberry.png',
-                '/pokemons/003.png': '/berries/durinberry.png',
-                '/pokemons/004.png': '/berries/leppaberry.png',
-                '/pokemons/005.png': '/berries/leppaberry.png',
-                '/pokemons/006.png': '/berries/leppaberry.png',
-                '/pokemons/007.png': '/berries/oranberry.png',
-                '/pokemons/008.png': '/berries/oranberry.png',
-                '/pokemons/009.png': '/berries/oranberry.png',
-            };
-            const ingredientMap: { [key: string]: string } = {
-                '/pokemons/001.png': '/ingredients/honey.png',
-                '/pokemons/002.png': '/ingredients/honey.png',
-                '/pokemons/003.png': '/ingredients/honey.png',
-                '/pokemons/004.png': '/Ingredients/beansausage.png',
-                '/pokemons/005.png': '/Ingredients/beansausage.png',
-                '/pokemons/006.png': '/Ingredients/beansausage.png',
-                '/pokemons/007.png': '/Ingredients/moomoomilk.png',
-                '/pokemons/008.png': '/Ingredients/moomoomilk.png',
-                '/pokemons/009.png': '/Ingredients/moomoomilk.png',
-            };
-            const selectedBerry = berryMap[image] || '/berries/durinberry.png';
-            const selectedIngredient = ingredientMap[image] || '/ingredients/honey.png';
+            const selectedItem = itemMap[image] || { berry: '/berries/durinberry.png', ingredient: '/ingredients/honey.png' };
             setSelectedItems(prev => ({
                 ...prev,
                 [type]: image,
-                berry: selectedBerry,
-                ingredient1: selectedIngredient,
-                ingredient2: selectedIngredient,
-                ingredient3: selectedIngredient,
+                berry: selectedItem.berry,
+                ingredient1: selectedItem.ingredient,
+                ingredient2: selectedItem.ingredient,
+                ingredient3: selectedItem.ingredient,
             }));
         } else {
             setSelectedItems(prev => ({ ...prev, [type]: image }));
@@ -136,7 +125,6 @@ const Card = () => {
                 <div className='w-full max-w-[650px]'>
                     <button
                         className='absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-4xl'
-                        onClick={onClose}
                         >
                         &#x2715;
                     </button>
@@ -159,255 +147,98 @@ const Card = () => {
         );
     };
 
-  return (
-    <div className='flex justify-center flex-col mb-2  w-screen max-w-[650px] rounded bg-slate-200 dark:bg-slate-800'>
-        <div className='flex justify-end'>
-            <Image
-                src='/gadget24-removebg-preview.png'
-                alt='Modal Icon'
-                width={40}
-                height={40}
-                onClick={handleTextAreaToggleModal}
-            />
-            {modalOpen.textArea && (
-                <TextAreaModal selectedItems={selectedItems} onClose={handleTextAreaToggleModal} />
-            )}
-        </div>
-        {/* pokemons */}
-        <div className="flex items-center justify-center bg-opacity-75">
-            {modalOpen.pokemon && (
-                <div onClick={() => handleCloseModal('pokemon')} className="flex justify-center fixed top-0 left-0 pt-12 w-full h-full overflow-y-scroll bg-slate-900/90">
-                    <div className="grid grid-cols-5 gap-4">
-                        {pokemonImages.map((image) => (
-                            <Image
-                                key={image}
-                                src={image}
-                                alt="サムネイル"
-                                width={80}
-                                height={80}
-                                priority={true}
-                                className="rounded-full cursor-pointer"
-                                onClick={() => {
-                                handleItemClick('pokemon', image);
-                                handleCloseModal('pokemon');
-                                }}
-                            />
-                        ))}
-                        <button
-                        onClick={() => handleCloseModal('pokemon')}
-                        className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md h-12"
-                        >
-                        閉じる
-                        </button>
-                    </div>
-                </div>
-            )}
-            <Image
-                src={selectedItems.pokemon || '/pokemons/001.png'}
-                alt={selectedItems.pokemon ? "選択した画像" : "デフォルトの画像"}
-                className="rounded-full max-h-[80px]"
-                width={80}
-                height={80}
-                onClick={() =>handleOpenModal('pokemon')}
-            />
-        </div>
-        <div className='flex justify-between'>
-            <div>
-                <Dropdown options={options} />
-            </div>
-            <div className='flex'>
-                {/* berry */}
-                <div className="flex items-center justify-center bg-opacity-75">
-                    {modalOpen.berry && (
-                        <div onClick={() => handleCloseModal('berry')} className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
-                            <div className="grid grid-cols-3 gap-4">
-                                {berryImages.map((image) => (
-                                    <Image
-                                        key={image}
-                                        src={image}
-                                        alt="サムネイル"
-                                        width={80}
-                                        height={80}
-                                        className={`
-                                            rounded-full cursor-pointer 
-                                            ${
-                                                selectedItems.pokemon && 
-                                                (
-                                                    selectedItems.pokemon === '/pokemon/001.png' || 
-                                                    selectedItems.pokemon === '/pokemon/002.png' || 
-                                                    selectedItems.pokemon === '/pokemon/003.png'
-                                                ) && 
-                                                image !== '/berries/durinberry.png' 
-                                                ? 'filter brightness-50' 
-                                                : 
-                                                (
-                                                    selectedItems.pokemon === '/pokemon/004.png' || 
-                                                    selectedItems.pokemon === '/pokemon/005.png' || 
-                                                    selectedItems.pokemon === '/pokemon/006.png'
-                                                ) && 
-                                                image !== '/berries/leppaberry.png' 
-                                                ? 'filter brightness-50' 
-                                                : 
-                                                selectedItems.pokemon === '/pokemon/007.png' || 
-                                                selectedItems.pokemon === '/pokemon/008.png' || 
-                                                selectedItems.pokemon === '/pokemon/009.png' 
-                                                ? image !== '/berries/oranberry.png' 
-                                                ? 'filter brightness-50' 
-                                                : ''
-                                                : ''
-                                            }
-                                        `}
-                                        onClick={() => {
-                                            handleItemClick('berry', image);
-                                            handleCloseModal('berry');
-                                        }}
-                                    />
-                                ))}
-                                <button
-                                    onClick={() => handleCloseModal('berry')}
-                                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md h-12"
+    const defaultImages = {
+        pokemon: '/pokemons/001.png',
+        berry: '/berries/durinberry.png',
+        ingredient1: '/ingredients/honey.png',
+        ingredient2: '/ingredients/honey.png',
+        ingredient3: '/ingredients/honey.png',
+    };   
+    type ItemType = "pokemon" | "berry" | "ingredient1" | "ingredient2" | "ingredient3";
+    type ItemModalProps = {
+        itemType: ItemType;
+        images: string[];
+        selectedItems: any;
+        itemMap: any;
+        ingredientHighlightMap: any;
+        modalOpen: any;
+        handleCloseModal: any;
+        handleItemClick: any;
+    }; 
+
+    const ItemModal = ({ itemType, images, selectedItems, itemMap, ingredientHighlightMap, modalOpen, handleCloseModal, handleItemClick }: ItemModalProps) => {
+        return (
+            <div className="flex items-center justify-center bg-opacity-75">
+                {modalOpen[itemType] && (
+                    <div onClick={() => handleCloseModal(itemType)} className={itemType === 'pokemon' ? "flex justify-center fixed top-0 left-0 pt-12 w-full h-full overflow-y-scroll bg-slate-900/90" : "flex items-center justify-center fixed inset-0 bg-slate-900/90"}>
+                        <div className={`grid ${itemType === 'pokemon' ? 'grid-cols-5' : 'grid-cols-3'}`}>
+                            <button
+                                className='absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-4xl'
                                 >
-                                    閉じる
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                    <Image
-                        src={selectedItems.berry || '/berries/durinberry.png'}
-                        alt={selectedItems.berry ? "選択した画像" : "デフォルトの画像"}
-                        width={40}
-                        height={40}
-                        className="rounded-full max-h-[40px]"
-                        onClick={() => handleOpenModal('berry')}
-                    />
-                </div>
-                {/* Ingredient1 */}
-                <div className="flex items-center justify-center bg-opacity-75">
-                    {modalOpen.ingredient1 && (
-                        <div onClick={() => handleCloseModal('ingredient1')} className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
-                            <div className="grid grid-cols-3 gap-4">
-                                {ingredientImages.map((image) => (
-                                    <Image
-                                        key={image}
-                                        src={image}
-                                        alt="サムネイル"
-                                        width={80}
-                                        height={80}
-                                        className={`rounded-full cursor-pointer ${
-                                            selectedItems.pokemon && ['/pokemons/001.png', '/pokemons/002.png', '/pokemons/003.png'].includes(selectedItems.pokemon) && ingredientHighlightMap['Ingredient1'].includes(image)
-                                            ? '' 
-                                            : 'filter brightness-50'
-                                        }`}
-                                        onClick={() => {
-                                            handleItemClick('ingredient1', image);
-                                            handleCloseModal('ingredient1');
-                                        }}
-                                    />
-                                ))}
-                                <button
-                                    onClick={() => handleCloseModal('ingredient1')}
-                                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md h-12"
-                                >
-                                    閉じる
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                    <Image
-                        src={selectedItems.ingredient1 || '/ingredients/honey.png'}
-                        alt={selectedItems.ingredient1 ? "選択した画像" : "デフォルトの画像"}
-                        width={40}
-                        height={40}
-                        onClick={() => handleOpenModal('ingredient1')}
-                        className="rounded-full max-h-[40px]"
-                    />
-                </div>
-                {/* Ingredient2 */}
-                <div className="flex items-center justify-center bg-opacity-75">
-                {modalOpen.ingredient2 && (
-                    <div onClick={() => handleCloseModal('ingredient2')} className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
-                        <div className="grid grid-cols-3 gap-4">
-                            {ingredientImages.map((image) => (
+                                &#x2715;
+                            </button>   
+                            {images.map((image, index) => (
                                 <Image
                                     key={image}
                                     src={image}
                                     alt="サムネイル"
                                     width={80}
                                     height={80}
+                                    priority={index === 0} // 最初の画像にpriorityを設定
                                     className={`rounded-full cursor-pointer ${
-                                        selectedItems.pokemon &&['/pokemons/001.png', '/pokemons/002.png', '/pokemons/003.png'].includes(selectedItems.pokemon) && ingredientHighlightMap['Ingredient2'].includes(image)
-                                        ? '' 
-                                        : 'filter brightness-50'
+                                        (itemType !== 'pokemon' && selectedItems[itemType] && ingredientHighlightMap[itemType]?.includes(image))
+                                        ? '' // 選択された画像の明るさを変更しない
+                                        : (itemType !== 'pokemon' && !['/pokemons/001.png', '/pokemons/002.png', '/pokemons/003.png'].includes(image)) ? 'filter brightness-50' : '' // それ以外の画像の明るさを50%に設定、ただしpokemonの場合は適用しない
                                     }`}
                                     onClick={() => {
-                                        handleItemClick('ingredient2', image);
-                                        handleCloseModal('ingredient2');
+                                        handleItemClick(itemType, image);
+                                        handleCloseModal(itemType);
                                     }}
                                 />
                             ))}
-                            <button
-                                onClick={() => handleCloseModal('ingredient2')}
-                                className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md h-12"
-                            >
-                                閉じる
-                            </button>
                         </div>
                     </div>
                 )}
-                    <Image
-                        src={selectedItems.ingredient2 || '/ingredients/honey.png'}
-                        alt={selectedItems.ingredient2 ? "選択した画像" : "デフォルトの画像"}
-                        width={40}
-                        height={40}
-                        onClick={() => handleOpenModal('ingredient2')}
-                        className="rounded-full max-h-[40px]"
-                    />
+                <Image
+                    src={selectedItems[itemType] || defaultImages[itemType]}
+                    alt={selectedItems[itemType] ? "選択した画像" : "デフォルトの画像"}
+                    width={itemType === 'pokemon' ? 80 : 40}
+                    height={itemType === 'pokemon' ? 80 : 40}
+                    onClick={() => handleOpenModal(itemType)}
+                    className={`rounded-full ${itemType === 'pokemon' ? 'max-h-[80px]' : 'max-h-[40px]'}`}
+                />
+            </div>
+        );
+    };
+
+    return (
+        <div className='flex justify-center flex-col mb-2  w-screen max-w-[650px] rounded bg-slate-200 dark:bg-slate-800'>
+            <div className='flex justify-end'>
+                <Image
+                    src='/gadget24-removebg-preview.png'
+                    alt='Modal Icon'
+                    width={40}
+                    height={40}
+                    onClick={handleTextAreaToggleModal}
+                />
+                {modalOpen.textArea && (
+                    <TextAreaModal selectedItems={selectedItems} onClose={handleTextAreaToggleModal} />
+                )}
+            </div>
+            <ItemModal itemType="pokemon" images={pokemonImages} selectedItems={selectedItems} itemMap={itemMap} ingredientHighlightMap={ingredientHighlightMap} modalOpen={modalOpen} handleCloseModal={handleCloseModal} handleItemClick={handleItemClick} />
+            <div className='flex justify-between'>
+                <div>
+                    <Dropdown options={options} />
                 </div>
-                {/* Ingredient3 */}
-                <div className="flex items-center justify-center bg-opacity-75">
-                    {modalOpen.ingredient3 && (
-                        <div onClick={() => handleCloseModal('ingredient3')} className="flex items-center justify-center fixed inset-0 bg-slate-900/90">
-                            <div className="grid grid-cols-3 gap-4">
-                                {ingredientImages.map((image) => (
-                                    <Image
-                                        key={image}
-                                        src={image}
-                                        alt="サムネイル"
-                                        width={80}
-                                        height={80}
-                                        className={`rounded-full cursor-pointer ${
-                                            selectedItems.pokemon &&['/pokemons/001.png', '/pokemons/002.png', '/pokemons/003.png'].includes(selectedItems.pokemon) && ingredientHighlightMap['Ingredient3'].includes(image)
-                                            ? '' 
-                                            : 'filter brightness-50'
-                                        }`}
-                                        onClick={() => {
-                                            handleItemClick('ingredient3', image);
-                                            handleCloseModal('ingredient3');
-                                        }}
-                                    />
-                                ))}
-                                <button
-                                    onClick={() => handleCloseModal('ingredient3')}
-                                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md h-12"
-                                >
-                                    閉じる
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                    <Image
-                        src={selectedItems.ingredient3 || '/ingredients/honey.png'}
-                        alt={selectedItems.ingredient3 ? "選択した画像" : "デフォルトの画像"}
-                        width={40}
-                        height={40}
-                        onClick={() => handleOpenModal('ingredient3')}
-                        className="rounded-full max-h-[40px]"
-                    />
+                <div className='flex'>
+                    <ItemModal itemType="berry" images={berryImages} selectedItems={selectedItems} itemMap={itemMap} ingredientHighlightMap={ingredientHighlightMap} modalOpen={modalOpen} handleCloseModal={handleCloseModal} handleItemClick={handleItemClick} />
+                    <ItemModal itemType="ingredient1" images={ingredientImages} selectedItems={selectedItems} itemMap={itemMap} ingredientHighlightMap={ingredientHighlightMap} modalOpen={modalOpen} handleCloseModal={handleCloseModal} handleItemClick={handleItemClick} />
+                    <ItemModal itemType="ingredient2" images={ingredientImages} selectedItems={selectedItems} itemMap={itemMap} ingredientHighlightMap={ingredientHighlightMap} modalOpen={modalOpen} handleCloseModal={handleCloseModal} handleItemClick={handleItemClick} />
+                    <ItemModal itemType="ingredient3" images={ingredientImages} selectedItems={selectedItems} itemMap={itemMap} ingredientHighlightMap={ingredientHighlightMap} modalOpen={modalOpen} handleCloseModal={handleCloseModal} handleItemClick={handleItemClick} />
                 </div>
             </div>
         </div>
-    </div>
-  )
+    )
 }
 
-export default Card
+export default Card;
