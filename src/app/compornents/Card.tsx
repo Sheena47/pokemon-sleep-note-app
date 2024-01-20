@@ -191,13 +191,9 @@ const Card = () => {
         itemType: ItemTypes;
         itemNum: ItemNumTypes;
         images: string[];
-        selectedItems: any;
-        modalOpen: any;
-        handleCloseModal: any;
-        handleItemClick: any;
     }; 
 
-    const ItemModal = ({ itemType, itemNum, images, selectedItems, modalOpen, handleCloseModal, handleItemClick }: ItemModalProps) => {
+    const ItemModal = ({ itemType, itemNum, images,}: ItemModalProps) => {
         return (
             <div className="flex items-center justify-center bg-opacity-75">
                 {modalOpen[itemType] && (
@@ -253,16 +249,16 @@ const Card = () => {
                     <TextAreaModal selectedItems={selectedItems} onClose={handleTextAreaToggleModal} />
                 )}
             </div>
-                <ItemModal itemType={ItemTypes.Pokemon} itemNum={ItemNumTypes.Pokemon} images={pokemonImages} selectedItems={selectedItems} modalOpen={modalOpen} handleCloseModal={handleCloseModal} handleItemClick={handleItemClick} />
+                <ItemModal itemType={ItemTypes.Pokemon} itemNum={ItemNumTypes.Pokemon} images={pokemonImages}/>
             <div className='flex justify-between'>
                 <div>
                     <Dropdown options={options} />
                 </div>
                 <div className='flex mr-2'>
-                    <ItemModal itemType={ItemTypes.Berry} itemNum={ItemNumTypes.Berry} images={berryImages} selectedItems={selectedItems} modalOpen={modalOpen} handleCloseModal={handleCloseModal} handleItemClick={handleItemClick} />
-                    <ItemModal itemType={ItemTypes.Ingredient1} itemNum={ItemNumTypes.Ingredient1} images={ingredientImages} selectedItems={selectedItems} modalOpen={modalOpen} handleCloseModal={handleCloseModal} handleItemClick={handleItemClick} />
-                    <ItemModal itemType={ItemTypes.Ingredient2} itemNum={ItemNumTypes.Ingredient2} images={ingredientImages} selectedItems={selectedItems} modalOpen={modalOpen} handleCloseModal={handleCloseModal} handleItemClick={handleItemClick} />
-                    <ItemModal itemType={ItemTypes.Ingredient3} itemNum={ItemNumTypes.Ingredient3} images={ingredientImages} selectedItems={selectedItems} modalOpen={modalOpen} handleCloseModal={handleCloseModal} handleItemClick={handleItemClick} />
+                    <ItemModal itemType={ItemTypes.Berry} itemNum={ItemNumTypes.Berry} images={berryImages}/>
+                    <ItemModal itemType={ItemTypes.Ingredient1} itemNum={ItemNumTypes.Ingredient1} images={ingredientImages}/>
+                    <ItemModal itemType={ItemTypes.Ingredient2} itemNum={ItemNumTypes.Ingredient2} images={ingredientImages}/>
+                    <ItemModal itemType={ItemTypes.Ingredient3} itemNum={ItemNumTypes.Ingredient3} images={ingredientImages}/>
                 </div>
             </div>
         </div>
