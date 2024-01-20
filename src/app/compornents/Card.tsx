@@ -106,6 +106,15 @@ const Card = () => {
                 } else if (['/pokemons/007.png', '/pokemons/008.png', '/pokemons/009.png'].includes(image)) {
                     newItems = { ...newItems, 'berry': '/berries/oranberry.png', 'ingredient1': '/ingredients/moomoomilk.png', 'ingredient2': '/ingredients/soothingcacao.png', 'ingredient3': '/ingredients/beansausage.png' };
                     setItemNums({ berry: 1, ingredient1: 2, ingredient2: 3, ingredient3: 7 });
+                } else if (['/pokemons/172.png', '/pokemons/026.png', '/pokemons/027.png'].includes(image)) {
+                    newItems = { ...newItems, 'berry': '/berries/grepaberry.png', 'ingredient1': '/ingredients/fancyapple.png', 'ingredient2': '/ingredients/warmingginger.png', 'ingredient3': '/ingredients/fancyegg.png' };
+                    setItemNums({ berry: 2, ingredient1: 2, ingredient2: 4, ingredient3: 4 });
+                } else if (['/pokemons/069.png', '/pokemons/070.png', '/pokemons/071.png'].includes(image)) {
+                    newItems = { ...newItems, 'berry': '/berries/durinberry.png', 'ingredient1': '/ingredients/snoozytomato.png', 'ingredient2': '/ingredients/softpotato.png', 'ingredient3': '/ingredients/largeleek.png' };
+                    setItemNums({ berry: 1, ingredient1: 2, ingredient2: 4, ingredient3: 4 });
+                } else if (['/pokemons/092.png', '/pokemons/093.png', '/pokemons/094.png'].includes(image)) {
+                    newItems = { ...newItems, 'berry': '/berries/blukberry.png', 'ingredient1': '/ingredients/fieryherb.png', 'ingredient2': '/ingredients/tastymushroom.png', 'ingredient3': '/ingredients/pureoil.png' };
+                    setItemNums({ berry: 1, ingredient1: 2, ingredient2: 4, ingredient3: 7 });
                 }
             }
     
@@ -144,7 +153,7 @@ const Card = () => {
                     onClick={() => onClick(itemType, selectedItem || defaultImage)}
                     className="rounded-full max-h-[40px]"
                 />
-                {itemType !== ItemTypes.Pokemon && <span className="ml-2">{itemNums[itemNum]}</span>}
+                {itemType !== ItemTypes.Pokemon && <span>{itemNums[itemNum]}</span>}
             </div>
         );
     };
@@ -166,11 +175,12 @@ const Card = () => {
                         <TextAreaModalIcon itemType={ItemTypes.Ingredient3} itemNum={ItemNumTypes.Ingredient3} selectedItem={selectedItems.ingredient3}  defaultImage='/ingredients/honey.png' onClick={handleItemClick} />
                     </div>
                     <TextArea
-                        label="Your Label"
+                        label=""
                         placeholder="Type something here..."
                         rows={5}
                         maxLength={140}
                         className='text-white'
+                        onClick={e => e.stopPropagation()}
                     />
                 </div>
             </div>
@@ -224,7 +234,7 @@ const Card = () => {
                     onClick={() => handleOpenModal(itemType)}
                     className={'rounded-full'}
                 />
-                {itemType !== ItemTypes.Pokemon && <span className="ml-2">{itemNums[itemNum]}</span>}
+                {itemType !== ItemTypes.Pokemon && <span>{itemNums[itemNum]}</span>}
             </div>
         );
     };
@@ -248,7 +258,7 @@ const Card = () => {
                 <div>
                     <Dropdown options={options} />
                 </div>
-                <div className='flex'>
+                <div className='flex mr-2'>
                     <ItemModal itemType={ItemTypes.Berry} itemNum={ItemNumTypes.Berry} images={berryImages} selectedItems={selectedItems} modalOpen={modalOpen} handleCloseModal={handleCloseModal} handleItemClick={handleItemClick} />
                     <ItemModal itemType={ItemTypes.Ingredient1} itemNum={ItemNumTypes.Ingredient1} images={ingredientImages} selectedItems={selectedItems} modalOpen={modalOpen} handleCloseModal={handleCloseModal} handleItemClick={handleItemClick} />
                     <ItemModal itemType={ItemTypes.Ingredient2} itemNum={ItemNumTypes.Ingredient2} images={ingredientImages} selectedItems={selectedItems} modalOpen={modalOpen} handleCloseModal={handleCloseModal} handleItemClick={handleItemClick} />
